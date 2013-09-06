@@ -3,9 +3,13 @@ require 'yajl/json_gem'
 module Theia
   module Mode
     class Watcher < EventMachine::FileWatch
-      def initialize(path, channel)
-        @path     = path
-        @channel  = channel
+
+      def self.path=(path)
+        @@path = path
+      end
+
+      def self.channel=(channel)
+        @@channel = channel
       end
 
       def file_modified
@@ -13,8 +17,8 @@ module Theia
       end
 
       def broadcast_state
-        state = YAML.load_file("#{ data_path }")
-        @channel.push(state.to_json)
+        state = YAML.load_file("#{ @@path }/state.yml")
+        @@channel.push(state.to_json)
       end
     end
 
@@ -25,7 +29,8 @@ module Theia
         super(options)
 
         @channel = EM::Channel.new
-        @watcher = Watcher.new(data_path, @channel)
+        Watcher.path = data_path
+        Watcher.channel = @channel
       end
 
       def start
@@ -33,7 +38,7 @@ module Theia
         EventMachine.kqueue = EventMachine.kqueue?
 
         EM.run {
-          EM::WebSocket.run(host: @@options[:host] || '0.0.0.0', port: @@options[:port] || 8080) do |ws|
+          EM::WebSocket.run(host: @options[:host] || '0.0.0.0', port: @options[:port] || 8080) do |ws|
             ws.onopen do
               sid = @channel.subscribe { |msg| ws.send msg }
 
@@ -43,9 +48,9 @@ module Theia
             end
           end
 
-          EM.watch_file("#{ data_path }/state.yml", Watcher.new(data_path, @channel))
+          EM.watch_file("#{ data_path }/state.yml", Watcher)
           puts <<-MSG
-Running on #{ @@options[:host] || '0.0.0.0' }:#{ @@options[:port] || 8080 }...
+Running on #{ @options[:host] || '0.0.0.0' }:#{ @options[:port] || 8080 }...
 Press Ctrl+C to stop.
           MSG
         }
