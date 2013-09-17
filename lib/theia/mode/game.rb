@@ -1,11 +1,14 @@
 module Theia
   module Mode
     class Game < VideoBase
+      RETURN_FROM_PAUSE_GRACE = 10
+
       def initialize(options)
         super(options)
 
         @pieces = []
         @state  = :stopped
+        @grace  = 0
       end
 
       def delta_window
@@ -20,10 +23,15 @@ module Theia
         loop do
           pieces = []
           with_cycle do |frame, delta|
-            @state = :running
-
             board_window.show(frame)
             delta_window.show(delta)
+
+            if @grace > 0
+              @grace -= 1
+              next
+            end
+
+            @state = :running
 
             with_each_contour do |contour, mean|
               # Pause the game if we find a big blob. This usually indicates
@@ -31,6 +39,7 @@ module Theia
               # get very erroneous results if we don't do this.
               if contour.rect.area > 10_000
                 @state = :paused
+                @grace = RETURN_FROM_PAUSE_GRACE
               end
 
               # Skip if we happened to catch some noise.
