@@ -8,7 +8,7 @@ module Theia
 
         @capture        = Capture.new(options)
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor.new history: BACKGROUND_FRAMES, shadow_detection: false
+        @bg_subtractor  = BackgroundSubtractor.new history: BACKGROUND_FRAMES, shadow_detection: false, threshold: 32
 
         calibrate!
       end

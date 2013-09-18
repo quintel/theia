@@ -18,7 +18,11 @@ module Theia
     end
 
     def bounds
-      @bounds ||= begin
+      @bounds ||= get_bounds
+    end
+
+    def get_bounds
+      loop do
         frame = Image.new
 
         @cap >> frame
@@ -39,7 +43,9 @@ module Theia
         contours.select!  { |c| (c.rect.size.width.to_f / c.rect.size.height).approx(1.41, 0.1) }
         contours.sort!    { |c| c.rect.area }
 
-        contours[0].rect
+        if contours[0].rect.area > 5000
+          return contours[0].rect
+        end
       end
     end
   end

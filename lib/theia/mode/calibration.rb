@@ -27,6 +27,10 @@ module Theia
         @board_window ||= GUI::Window.new("Board")
       end
 
+      def delta_window
+        @delta_window ||= GUI::Window.new("Delta")
+      end
+
       def pieces
         Piece.pieces data_path
       end
@@ -41,6 +45,7 @@ module Theia
             display.copy!(frame)
             display.draw_rectangle(@rect, Color.new(255, 0, 0))
             board_window.show(display)
+            delta_window.show(delta)
 
             # Here we crop the frame and delta because we're just interested
             # in what's going on inside the ROI defined by @rect. Essentially,
@@ -86,10 +91,9 @@ module Theia
 
       def remove_stage(frame, delta)
         puts "Remove the model."
-        if delta.mean.zeros?
-          next_stage!
-          next_piece!
-        end
+        sleep(5)
+        next_stage!
+        next_piece!
       end
 
       private
