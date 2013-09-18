@@ -56,7 +56,7 @@ module Theia
       # Public: Iterates through contours and yields them.
       def with_each_contour
         contours = @delta.contours
-        contours.select! { |c| c.rect.area > 500 }
+        contours.select! { |c| c.rect.area > 600 }
         contours.each do |contour|
           # Generate a mask based on the current contour, and erode it so
           # that we can get rid of some of the shadow around the piece.
