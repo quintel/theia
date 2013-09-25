@@ -91,7 +91,7 @@ module Theia
 
       def remove_stage(frame, delta)
         puts "Remove the model."
-        sleep(5)
+        return unless delta.mean.zeros?
         next_stage!
         next_piece!
       end

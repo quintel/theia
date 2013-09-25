@@ -1,3 +1,8 @@
+PATH
+  remote: ../spyglass
+  specs:
+    spyglass (0.0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -27,7 +32,6 @@ GEM
     ruby_parser (3.2.2)
       sexp_processor (~> 4.1)
     sexp_processor (4.3.0)
-    spyglass (0.0.2)
     thor (0.18.1)
     tomdoc (0.2.5)
       colored
@@ -43,7 +47,7 @@ DEPENDENCIES
   eventmachine
   rake
   rspec
-  spyglass (= 0.0.2)
+  spyglass!
   thor
   tomdoc
   yajl-ruby

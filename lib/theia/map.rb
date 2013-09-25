@@ -22,9 +22,9 @@ module Theia
     end
 
     def get_bounds
+      frame = Image.new
       loop do
-        frame = Image.new
-
+        puts "[MAP] Detecting..."
         @cap >> frame
 
         # Convert the image to black & white, run a threshold
@@ -40,12 +40,15 @@ module Theia
         contours = frame.contours
 
         # Filter out false positives and sort by area.
-        contours.select!  { |c| (c.rect.size.width.to_f / c.rect.size.height).approx(1.41, 0.1) }
-        contours.sort!    { |c| c.rect.area }
-
-        if contours[0].rect.area > 5000
-          return contours[0].rect
+        contours.select! do |c| 
+          size  = c.rect.size
+          long  = [size.width, size.height].max
+          short = [size.width, size.height].min
+          
+          (long.to_f / short).approx(1.41, 0.2)
         end
+        contour = contours.max { |a, b| a.rect.area <=> b.rect.area }
+        return contour.rect if contour
       end
     end
   end

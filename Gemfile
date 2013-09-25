@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rake'
 gem 'rspec'
-gem 'spyglass', '0.0.2'
+gem 'spyglass', path: '../spyglass'
 gem 'thor'
 gem 'eventmachine'
 gem 'em-websocket'
