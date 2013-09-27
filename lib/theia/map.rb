@@ -14,41 +14,27 @@ module Theia
     #
     # cap - An instance of Theia::Capture
     def initialize(cap)
-      @cap = cap
+      @cap  = cap
+      @raw  = Image.new
     end
 
-    def bounds
-      @bounds ||= get_bounds
-    end
+    def frame
+      @cap >> @raw
+      bw = @raw.convert(ColorSpace[:RGB => :Gray])
+      bw.threshold! 100.0, 255.0
+      bw.canny! 100, 100
+      bw.dilate!
 
-    def get_bounds
-      frame = Image.new
-      loop do
-        puts "[MAP] Detecting..."
-        @cap >> frame
+      contours = bw.contours
+      contours.select!  { |c| c.convex?             }
+      contours.select!  { |c| c.rect.area > 500_000 }
+      contours.sort_by! { |c| -1 * c.rect.area      }
 
-        # Convert the image to black & white, run a threshold
-        # so that we:
-        #
-        # - eliminate any colors brighter than black,
-        # - run the Canny edge detector to bring out the edges,
-        # - dilate the image to connect unconnected lines
-        frame.convert! ColorSpace[:BGR => :Gray]
-        frame.threshold_inv! 80.0, 255.0
-        frame.canny! 50, 150
-        frame.dilate! 2
-        contours = frame.contours
+      return if contours.empty?
 
-        # Filter out false positives and sort by area.
-        contours.select! do |c| 
-          size  = c.rect.size
-          long  = [size.width, size.height].max
-          short = [size.width, size.height].min
-          
-          (long.to_f / short).approx(1.41, 0.2)
-        end
-        contour = contours.max { |a, b| a.rect.area <=> b.rect.area }
-        return contour.rect if contour
+      contour = contours.last
+      if corners = contour.corners
+        @raw.warp_perspective(corners, Size.new(1189, 841))
       end
     end
   end

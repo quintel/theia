@@ -8,27 +8,8 @@ module Theia
 
         @capture        = Capture.new(options)
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor.new history: BACKGROUND_FRAMES
+        @bg_subtractor  = BackgroundSubtractor.new threshold: 8
         @cycle          = 0
-
-        calibrate!
-      end
-
-      # Public: Starts the calibration process.
-      #
-      # First, it tries to capture the map boundaries, and then trains the
-      # background subtractor.
-      def calibrate!
-        # Set the camera bounds to the map. This greatly reduces the size
-        # of images we have to work with.
-        @capture.bounds = @map.bounds
-        frame = Image.new
-
-        # Train background.
-        BACKGROUND_FRAMES.times do
-          @capture >> frame
-          @bg_subtractor.subtract(frame, 1.0/BACKGROUND_FRAMES)
-        end
       end
 
       # Public: Grabs the next frame and prepares it for detection.
@@ -40,13 +21,15 @@ module Theia
       # - Erode and dilate the delta image as a second step to remove
       #   shadows.
       def with_cycle
-        @cycle += 1
-        @frame ||= Image.new(@map.bounds.size, Image::TYPE_8UC3)
-        @capture >> @frame
+        @frame = nil
+        while !@frame do
+          @frame = @map.frame
+        end
 
-        @delta = @bg_subtractor.subtract(@frame, 0.003)
+        @cycle += 1
+        @delta = @bg_subtractor.subtract(@frame, 0.01)
         @delta.threshold! 128.0, 255.0
-        @delta.erode!.dilate!
+        @delta.erode!(2)
 
         yield @frame, @delta
 
@@ -78,7 +61,6 @@ module Theia
           yield contour, color
         end
       end
-
     end
   end
 end
