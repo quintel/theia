@@ -1,14 +1,19 @@
 module Theia
   module Mode
     class VideoBase < Base
-      BACKGROUND_FRAMES = 50
+      BACKGROUND_FRAMES     = 50
+      LEARNING_RATE         = 0.01
+      BG_TRESHOLD           = 8
+      EROSION_AMOUNT        = 2
+      IGNORE_AREA_THRESHOLD = 600
+      ERODE_PIECE_AMOUNT    = 5
 
       def initialize(options)
         super(options)
 
         @capture        = Capture.new(options)
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor.new threshold: 8
+        @bg_subtractor  = BackgroundSubtractor.new(threshold: BG_TRESHOLD)
         @cycle          = 0
       end
 
@@ -22,32 +27,44 @@ module Theia
       #   shadows.
       def with_cycle
         @frame = nil
+
+        # Loop until we get a (perspective corrected) frame from the map.
         while !@frame do
           @frame = @map.frame
         end
 
         @cycle += 1
-        @delta = @bg_subtractor.subtract(@frame, 0.01)
+        @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
+
+        # Turn all pixels until 128.0 to 0.0.
         @delta.threshold! 128.0, 255.0
-        @delta.erode!(2)
+
+        # Contract shapes.
+        @delta.erode!(EROSION_AMOUNT)
 
         yield @frame, @delta
 
+        # Wait for key (but not use it) and loop after 100 ms.
         GUI.wait_key(100)
+
         GC.start
       end
 
       # Public: Iterates through contours and yields them.
       def with_each_contour
         contours = @delta.contours
-        contours.select! { |c| c.rect.area > 600 }
+
+        contours.select! { |c| c.rect.area > IGNORE_AREA_THRESHOLD }
+
         contours.each do |contour|
-          # Generate a mask based on the current contour, and erode it so
+
+          # Generate a MASK based on the current contour, and erode it so
           # that we can get rid of some of the shadow around the piece.
+          # The whole map is black and the piece is white.
           mask = Image.new(@frame.size, Image::TYPE_8UC1)
           mask.fill!(Color.new(0))
           mask.draw_contours(contour, Color.new(255))
-          mask.erode! 5
+          mask.erode! ERODE_PIECE_AMOUNT
 
           # Create an image with the ROI (region-of-interest), and copy
           # the area drawn on the mask from the captured frame into this

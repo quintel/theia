@@ -12,14 +12,16 @@ module Theia
       #             user to remove it from the hotspot.
       STAGES = %w(waiting found training remove)
 
+      RECT_SIZE = 200
+
       def initialize(options)
         super(options)
 
         # This is the hotspot in the center of the map.
         @rect = Rect.new(
-          (@map.bounds.size.width / 2) - 100,
-          (@map.bounds.size.height / 2) - 100,
-          200, 200
+          (@map.bounds.size.width / 2) - (RECT_SIZE / 2),
+          (@map.bounds.size.height / 2) - (RECT_SIZE / 2),
+          RECT_SIZE, RECT_SIZE
         )
       end
 
@@ -96,7 +98,10 @@ module Theia
         next_piece!
       end
 
+      #######
       private
+      #######
+
       def next_stage!
         @stage_idx = (@stage_idx + 1) % STAGES.length
       end

@@ -18,13 +18,17 @@ module Theia
         Piece.pieces data_path
       end
 
+      #######
+      private
+      #######
+
       # Private: Ensures the data path exists.
       #
       # If it doesn't exist, create the directory.
-      private
       def ensure_data_path!
         Dir.mkdir(data_path) unless File.exists? data_path
       end
+
     end
   end
 end
