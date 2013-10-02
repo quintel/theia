@@ -1,4 +1,5 @@
 require 'yajl/json_gem'
+require 'eventmachine'
 
 module Theia
   module Mode
