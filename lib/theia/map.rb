@@ -44,13 +44,13 @@ module Theia
       contours = bw.contours
 
       # Only get closed contours
-      contours.select!  { |c| c.convex?             }
+      contours.select!  { |c| c.convex? }
 
       # Ignore small contours
-      contours.select!  { |c| c.rect.area > 500_000 }
+      contours.select!  { |c| c.rect.area > (@raw.cols * @raw.rows) / 3 }
 
       # Sort by size, we wanna have the last one!
-      contours.sort_by! { |c| -1 * c.rect.area      }
+      contours.sort_by! { |c| -1 * c.rect.area }
 
       # Return nil if nothing is detected (SNAFU)
       return if contours.empty?
