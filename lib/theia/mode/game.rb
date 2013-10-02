@@ -19,8 +19,11 @@ module Theia
       end
 
       def start
+        logger = Logger.new(@options[:verbose] ? $stdout : nil)
+
         loop do
           pieces = []
+
           with_cycle do |frame, delta|
             board_window.show(frame)
             delta_window.show(delta)
@@ -47,8 +50,9 @@ module Theia
             # over the board placing a piece.
             @pieces = pieces if @state != :paused
 
-            write_state!
+            logger.log(pieces)
 
+            write_state!
           end
         end
       end
