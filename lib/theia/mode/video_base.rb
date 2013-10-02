@@ -3,7 +3,7 @@ module Theia
     class VideoBase < Base
       BACKGROUND_FRAMES     = 50
       LEARNING_RATE         = 0.01
-      BG_TRESHOLD           = 8
+      BG_TRESHOLD           = 4
       EROSION_AMOUNT        = 2
       IGNORE_AREA_THRESHOLD = 600
       ERODE_PIECE_AMOUNT    = 5
