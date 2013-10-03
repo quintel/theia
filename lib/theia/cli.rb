@@ -30,7 +30,7 @@ module Theia
     end
 
     desc "websocket", "Starts the websocket server to publish game state"
-    method_option "port", type: :numeric, banner: "Port hwicht he websocket runs on", default: 8080
+    method_option "port", type: :numeric, banner: "Port on which the websocket runs", default: 8080
     long_desc <<-D
       This mode starts a websocket server that allows external applications to connect to theia and get the
       current state of the game.
