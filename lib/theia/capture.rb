@@ -12,7 +12,7 @@ module Theia
       source = options["source"] || 0
       @cap = VideoCapture.new source
 
-      # Preemptively instanciate the image object we'll use.
+      # Preemptively instantiate the image object we'll use.
       # This speeds up the process considerably, as memory
       # re-allocation doesn't happen very often if we do.
       @frame = Image.new
