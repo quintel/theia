@@ -15,6 +15,7 @@ module Theia
         @map            = Map.new(@capture)
         @bg_subtractor  = BackgroundSubtractor::PratiMediod.new history: 5, sampling_rate: 1
         @cycle          = 0
+        @tracker        = Tracker.new
       end
 
       # Public: Grabs the next frame and prepares it for detection.
