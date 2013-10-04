@@ -22,8 +22,6 @@ module Theia
 
         puts "Game started. Ready to go!"
         loop do
-          pieces = []
-
           with_cycle do |frame, delta|
             board_window.show(frame)
             delta_window.show(delta)
@@ -41,18 +39,19 @@ module Theia
               results = piece_definitions.map { |p| p.compare(mean) }
               min     = results.min
               piece   = piece_definitions[results.index min]
+              occurrence = Occurrence.new(contour.rect, piece, @cycle)
 
-              pieces << piece.key
+              @tracker.track(occurrence)
             end
 
             # Only overwrite the piece list if the game isn't paused. This
             # weeds out erroneous results that we might get when a hand is
             # over the board placing a piece.
-            @pieces = pieces if @state != :paused
+            @pieces = @tracker.pieces
 
-            Theia.logger.warn("Shit!")
-            Theia.logger.info("Shit!")
-            Theia.logger.debug("Shit!")
+            # Theia.logger.warn("Shit!")
+            Theia.logger.info(@pieces)
+            # Theia.logger.debug("Shit!")
 
             write_state!
           end
