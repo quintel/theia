@@ -19,7 +19,6 @@ module Theia
       end
 
       def start
-        logger = Logger.new(@options[:verbose] ? $stdout : nil)
 
         puts "Game started. Ready to go!"
         loop do
@@ -51,7 +50,9 @@ module Theia
             # over the board placing a piece.
             @pieces = pieces if @state != :paused
 
-            logger.log(pieces)
+            Theia.logger.warn("Shit!")
+            Theia.logger.info("Shit!")
+            Theia.logger.debug("Shit!")
 
             write_state!
           end

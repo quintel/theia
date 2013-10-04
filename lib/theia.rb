@@ -1,5 +1,6 @@
 require 'yaml'
 require 'spyglass'
+require 'log4r'
 
 require_relative 'theia/capture'
 require_relative 'theia/logger'
