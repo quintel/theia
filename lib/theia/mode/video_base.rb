@@ -3,7 +3,7 @@ module Theia
     class VideoBase < Base
       BACKGROUND_FRAMES     = 50
       LEARNING_RATE         = 0.01
-      BG_TRESHOLD           = 4
+      BG_THRESHOLD          = 50
       EROSION_AMOUNT        = 2
       IGNORE_AREA_THRESHOLD = 600
       ERODE_PIECE_AMOUNT    = 5
@@ -13,7 +13,7 @@ module Theia
 
         @capture        = Capture.new(options)
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor.new(threshold: BG_TRESHOLD)
+        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new history: 5, sampling_rate: 1
         @cycle          = 0
       end
 
@@ -33,8 +33,15 @@ module Theia
           @frame = @map.frame
         end
 
+        beginning = Time.now
+
         @cycle += 1
         @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
+
+        # Resize the frames
+        [@frame, @delta].map do |img|
+          img.resize!(Size.new(Map::A0_HEIGHT, Map::A0_WIDTH))
+        end
 
         # Turn all pixels until 128.0 to 0.0.
         @delta.threshold! 128.0, 255.0
@@ -44,10 +51,10 @@ module Theia
 
         yield @frame, @delta
 
+        puts "#{ Time.now - beginning } seconds."
+
         # Wait for key (but not use it) and loop after 100 ms.
         GUI.wait_key(100)
-
-        GC.start
       end
 
       # Public: Iterates through contours and yields them.
