@@ -56,16 +56,20 @@ module Theia
       contours.sort_by! { |c| -1 * c.rect.area }
 
       # Return nil if nothing is detected (SNAFU)
-      return if contours.empty?
+      if contours.empty?
+        puts("WARNING: Cannot find the map"); return nil
+      end
 
       # We wanna have the last (i.e. biggest) one!
       contour = contours.last
 
       # Return nil if we cannot find the corners
       if corners = contour.corners
-
         # Straighten up that image!
+        puts("Frame yielded")
         @raw.warp_perspective(corners, Size.new(A1_HEIGHT, A1_WIDTH))
+      else
+        puts("Cannot find the corners of the map")
       end
     end
   end

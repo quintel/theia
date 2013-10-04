@@ -19,6 +19,9 @@ module Theia
       end
 
       def start
+        logger = Logger.new(@options[:verbose] ? $stdout : nil)
+
+        puts "Game started. Ready to go!"
         loop do
           pieces = []
           with_cycle do |frame, delta|
