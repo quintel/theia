@@ -36,6 +36,7 @@ module Theia
         beginning = Time.now
 
         @cycle += 1
+
         @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
 
         # Resize the frames
