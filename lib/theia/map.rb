@@ -12,8 +12,11 @@ module Theia
   # Game map handler. Detects map boundaries.
   class Map
 
-    A0_WIDTH  = 841
-    A0_HEIGHT = 1189
+    A0_WIDTH  = 840
+    A0_HEIGHT = 1_188
+
+    A1_WIDTH  = 420
+    A1_HEIGHT = 594
 
     # Internal: Initialize a new map.
     #
@@ -62,7 +65,7 @@ module Theia
       if corners = contour.corners
 
         # Straighten up that image!
-        @raw.warp_perspective(corners, Size.new(A0_HEIGHT, A0_WIDTH))
+        @raw.warp_perspective(corners, Size.new(A1_HEIGHT, A1_WIDTH))
       end
     end
   end
