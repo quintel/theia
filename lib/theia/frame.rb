@@ -1,10 +1,15 @@
 module Theia
   class Frame
 
-    attr_reader :observations
+    attr_reader :observations, :recording
 
-    def initialize
+    def initialize(recording = nil)
       @observations = []
+      @recording = recording
+
+      recording.add_frame(self) if recording
+
+      self
     end
 
     def add_observation(observation)
