@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Observation do
 
-  let(:frame)       { Frame.new }
+  let(:recording)   { Recording.new }
+  let(:frame)       { Frame.new(recording) }
   let(:observation) { Observation.new(frame, :green, 100, 200, 10, 8) }
 
   describe '#initialize' do
@@ -51,4 +52,19 @@ describe Observation do
     end
   end
 
+  describe '#history' do
+
+    let(:frame_2)       { Frame.new(recording) }
+
+    context 'with a similar observation' do
+
+      let(:observation_2) { Observation.new(frame_2, :green, 100, 200, 10, 8) }
+
+      xit 'sees it' do
+        expect(observation_2.history).to include observation
+      end
+
+    end
+
+  end
 end # class Observation
