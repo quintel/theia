@@ -1,4 +1,5 @@
 module Theia
+  # A Frame is ONE moment in time in which the camera can observe something.
   class Frame
 
     attr_reader :observations, :recording

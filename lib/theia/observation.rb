@@ -1,4 +1,7 @@
 module Theia
+
+  # An Observation is something that is 'seen' by the camera in a particular
+  # Frame. It has a certain color, position and size.
   class Observation
 
     attr_reader :frame, :color, :x, :y, :width, :height
