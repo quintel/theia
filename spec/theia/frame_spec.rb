@@ -24,6 +24,14 @@ describe Frame do
 
   end
 
+  describe '#number' do
+
+    it 'should increase one for every newly instantiaded object' do
+      expect(Frame.new.number - Frame.new.number).to eq -1
+    end
+
+  end
+
   describe '#recording' do
 
     context 'with no recording present' do

@@ -1,6 +1,7 @@
 module Theia
   class Tracker
     DISTANCE_THRESHOLD = 40
+    THRESHOLD_RELIABILITY = 0.8
 
     attr_accessor :occurrences
 

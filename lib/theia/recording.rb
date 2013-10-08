@@ -11,12 +11,15 @@ module Theia
       @frames = []
     end
 
-    # Adds a frame to this recording. Pops off the first one, if it has hit
+    def observations
+    end
+
+    # Adds a frame to this recording. Pops off the last one, if it has hit
     # the max amount of frames allowed.
     def add_frame(frame)
-      @frames << frame
+      @frames.unshift(frame)
 
-      @frames.delete_at(0) if frames.size > MAX_FRAMES
+      @frames.delete_at(24) if frames.size > MAX_FRAMES
 
       @frames
     end
