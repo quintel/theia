@@ -17,7 +17,7 @@ describe Tracker do
     end
 
     context 'second frame' do
-      it 'should report occurrences' do
+      xit 'should report occurrences' do
         second = Occurrence.new(rect, 'coal_plant', 2)
         @tracker.track(second)
 

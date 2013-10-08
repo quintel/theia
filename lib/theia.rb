@@ -2,6 +2,9 @@ require 'yaml'
 require 'spyglass'
 require 'log4r'
 
+require_relative 'theia/observation'
+require_relative 'theia/frame'
+
 require_relative 'theia/occurrence'
 require_relative 'theia/tracker'
 require_relative 'theia/capture'
