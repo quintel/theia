@@ -38,7 +38,7 @@ module Theia
               # the lowest distance between colours.
               results = piece_definitions.map { |p| p.compare(mean) }
               min     = results.min
-              piece   = piece_definitions[results.index min]
+              piece   = Piece.all[results.index min]
               occurrence = Occurrence.new(contour.rect, piece, @cycle)
 
               @tracker.track(occurrence)
