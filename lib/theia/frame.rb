@@ -1,11 +1,13 @@
 module Theia
-  # A Frame is ONE moment in time in which the camera can observe something.
+  # A Frame is ONE moment in time in which the camera can observe multiple
+  # things.
   class Frame
 
     @@counter = 0
 
     attr_reader :observations, :recording, :number
 
+    # Public: creates a new Frame for the recording.
     def initialize(recording = nil)
       @observations = []
       @recording = recording
@@ -16,6 +18,7 @@ module Theia
       self
     end
 
+    # Public: add an observation to the frame.
     def add_observation(observation)
       @observations << observation
     end

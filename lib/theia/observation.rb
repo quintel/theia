@@ -21,10 +21,12 @@ module Theia
       self
     end
 
+    # Returns an Array containing x, y, width and height.
     def dimensions
       [x, y, width, height]
     end
 
+    # Fast forward to the frame's recording container.
     def recording
       frame.recording
     end
@@ -52,7 +54,8 @@ module Theia
     end
 
     # Returns the observations that have happened in previous frames on 
-    # (probably!) the same observed object.
+    # (probably!) the same observed object. We allow for a certain OFFSET
+    # in x and y values.
     #
     # Returns an Array of Observations in reserve order.
     def history
