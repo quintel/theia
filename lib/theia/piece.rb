@@ -39,8 +39,7 @@ module Theia
 
     # Public: Returns the Piece that best matches **color**
     def self.find_by_color(color)
-      color_matches = self.all.map { |piece| piece.compare(color) }
-      color_matches.min
+      self.all.sort_by { |p| p.compare(color) }.first
     end
 
     # Public: writes all the pieces back to disk

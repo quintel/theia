@@ -13,6 +13,17 @@ describe Piece do
 
   end
 
+  describe 'find_by_color' do
+
+    it 'finds the best suited color' do
+      Piece.stub(:all) { [coal_piece, gas_piece] }
+
+      expect(Piece.find_by_color([0,0,0])).to eq coal_piece
+      expect(Piece.find_by_color([255,255,255])).to eq gas_piece
+    end
+
+  end
+
   describe '#compare' do
 
     context 'when perfect match' do
