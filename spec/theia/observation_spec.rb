@@ -4,7 +4,7 @@ describe Observation do
 
   let(:recording)   { Recording.new }
   let(:frame)       { Frame.new(recording) }
-  let(:observation) { Observation.new(frame, :green, 100, 200, 10, 8) }
+  let(:observation) { Observation.new(frame, [0,0,0], 100, 200, 10, 8) }
 
   describe '#initialize' do
 
@@ -13,7 +13,7 @@ describe Observation do
     end
 
     it 'remembers color' do
-      expect(observation.color).to eq :green
+      expect(observation.color).to eq [0,0,0]
     end
 
     it 'remembers x' do
@@ -33,6 +33,14 @@ describe Observation do
     end
 
   end # initialize
+
+  describe '#piece' do
+
+    it 'returns a Piece' do
+      expect(observation.piece).to be_a(Piece)
+    end
+
+  end
 
   describe '#siblings' do
 
@@ -87,6 +95,25 @@ describe Observation do
         expect(observation2.history).to_not include observation1
       end
 
+    end
+
+  end # history
+
+  describe '#new' do
+
+    context 'when history is empty' do
+
+      it 'returns true' do
+        observation.stub(:history) { [] }
+        expect(observation.new?).to be_true
+      end
+    end
+
+    context 'when history is empty' do
+      it 'returns false' do
+        observation.stub(:history) { [observation.dup] }
+        expect(observation.new?).to be_false
+      end
     end
 
   end
