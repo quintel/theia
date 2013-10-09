@@ -21,10 +21,9 @@ module Theia
       self
     end
 
-    # Tries to determine which piece belongs to this observation by trying to
-    # match the
+    # Returns the Piece that belongs to the observed color.
     def piece
-      Piece.pieces('../../data')
+      Piece.find_by_color(color)
     end
 
     # Returns an Array containing x, y, width and height.
