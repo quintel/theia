@@ -53,10 +53,10 @@ module Theia
     #
     # Returns an Array of Observations in reserve order.
     def history
-      observations = recording.frames.map(&:observations).flatten
-      observations.select do |observation|
-        observation.x == self.x
-        observation.y == self.y
+      recording.observations.select do |observation|
+        observation.frame.number < self.frame.number &&
+        observation.x == self.x &&
+        observation.y == self.y &&
         observation.color == self.color
       end
     end
