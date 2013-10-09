@@ -4,6 +4,8 @@ module Theia
   # Frame. It has a certain color, position and size.
   class Observation
 
+    ALLOWED_OFFSET = 30
+
     attr_reader :frame, :color, :x, :y, :width, :height
 
     def initialize(frame, color, x, y, width, height)
@@ -33,7 +35,7 @@ module Theia
 
       # Probably out of focus or disaster happened. Nobody puts 3 new pieces
       # on the board instantly.
-      return 0 if siblings.select(&:new?).size > 5
+      return 0 if siblings.select(&:new?).size > 3
 
       reliability *= 0.5 if new?
     end
@@ -41,6 +43,7 @@ module Theia
     # Has this observation been seen before?
     # Returns true or false
     def new?
+      history.size == 0
     end
 
     # Returns all the concurrent observations.
@@ -55,8 +58,8 @@ module Theia
     def history
       recording.observations.select do |observation|
         observation.frame.number < self.frame.number &&
-        observation.x == self.x &&
-        observation.y == self.y &&
+        (observation.x - self.x).abs < ALLOWED_OFFSET &&
+        (observation.y - self.y).abs < ALLOWED_OFFSET &&
         observation.color == self.color
       end
     end
