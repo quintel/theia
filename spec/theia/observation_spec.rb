@@ -54,14 +54,17 @@ describe Observation do
 
   describe '#history' do
 
-    let(:frame_2)       { Frame.new(recording) }
+    let(:recording) { Recording.new }
+    let(:frame1)    { Frame.new(recording) }
+    let(:frame2)    { Frame.new(recording) }
 
-    context 'with a similar observation' do
+    context 'with the same observation' do
 
-      let(:observation_2) { Observation.new(frame_2, :green, 100, 200, 10, 8) }
-
-      xit 'sees it' do
-        expect(observation_2.history).to include observation
+      it 'sees the other one' do
+        observation1 = Observation.new(frame1, :green, 100, 200, 10, 8)
+        observation2 = Observation.new(frame2, :green, 100, 200, 10, 8)
+        expect(observation2.history).to include observation1
+        expect(observation2.history).to_not include observation2
       end
 
     end

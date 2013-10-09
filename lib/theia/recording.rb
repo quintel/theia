@@ -12,6 +12,7 @@ module Theia
     end
 
     def observations
+      frames.map(&:observations).flatten
     end
 
     # Adds a frame to this recording. Pops off the last one, if it has hit
