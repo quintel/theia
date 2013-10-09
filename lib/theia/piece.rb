@@ -45,7 +45,7 @@ module Theia
     # Public: writes all the pieces back to disk
     def self.write(path)
       result = self.all.map { |p| p.to_h }
-      File.write "#{ self.data_path }/pieces.yml", result.to_yaml
+      File.write self.data_path, result.to_yaml
     end
 
   end
