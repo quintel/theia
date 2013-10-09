@@ -21,6 +21,12 @@ module Theia
       self
     end
 
+    # Tries to determine which piece belongs to this observation by trying to
+    # match the
+    def piece
+      Piece.pieces('../../data')
+    end
+
     # Returns an Array containing x, y, width and height.
     def dimensions
       [x, y, width, height]
