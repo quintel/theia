@@ -69,5 +69,25 @@ describe Observation do
 
     end
 
+    context 'with a similar observation' do
+
+      it 'sees the other one' do
+        observation1 = Observation.new(frame1, :green, 80, 220, 10, 8)
+        observation2 = Observation.new(frame2, :green, 100, 200, 10, 8)
+        expect(observation2.history).to include observation1
+      end
+
+    end
+
+    context 'with a different positioned observation' do
+
+      it 'sees the other one' do
+        observation1 = Observation.new(frame1, :green, 50, 250, 10, 8)
+        observation2 = Observation.new(frame2, :green, 100, 200, 10, 8)
+        expect(observation2.history).to_not include observation1
+      end
+
+    end
+
   end
 end # class Observation
