@@ -69,7 +69,9 @@ module Theia
           pieces: @pieces.sort
         }
 
-        File.write "#{ data_path }/state.yml", state.to_yaml
+        path = File.expand_path('../../../../data/', __FILE__)
+
+        File.write "#{ path }/state.yml", state.to_yaml
       end
 
     end
