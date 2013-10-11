@@ -38,7 +38,7 @@ module Theia
               # the lowest distance between colours.
               results = piece_definitions.map { |p| p.compare(mean) }
               min     = results.min
-              piece   = piece_definitions[results.index min]
+              piece   = Piece.all[results.index min]
               occurrence = Occurrence.new(contour.rect, piece, @cycle)
 
               @tracker.track(occurrence)
@@ -69,7 +69,9 @@ module Theia
           pieces: @pieces.sort
         }
 
-        File.write "#{ data_path }/state.yml", state.to_yaml
+        path = File.expand_path('../../../../data/', __FILE__)
+
+        File.write "#{ path }/state.yml", state.to_yaml
       end
 
     end

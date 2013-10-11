@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rake'
 gem 'rspec'
+gem 'guard'
+gem 'guard-rspec'
 gem 'spyglass', '0.0.4'
 gem 'thor'
 gem 'log4r'
