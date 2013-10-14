@@ -26,7 +26,14 @@ module Theia
       end
 
       if !piece.fresh?(@cycle) && (piece.last_seen + 1) < occurrence.first_seen
-        piece.mark_for_deletion!(@cycle)
+        piece_area = piece.rect.area
+        occurrence_area = occurrence.rect.area
+        min = [piece_area, occurrence_area].min.to_f
+        max = [piece_area, occurrence_area].max.to_f
+
+        if (max / min) <= 1.2 && (max / min) >= 0.8
+          piece.mark_for_deletion!(@cycle)
+        end
       else
         piece.last_seen += 1
       end
