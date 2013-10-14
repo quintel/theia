@@ -22,10 +22,7 @@ module Theia
         puts "Game started. Ready to go!"
         loop do
           with_cycle do |frame, delta|
-            board_window.show(frame)
             delta_window.show(delta)
-
-            @state = :running
 
             with_each_contour do |contour, mean|
               # Skip if we happened to catch some noise.
@@ -45,7 +42,15 @@ module Theia
             # Only overwrite the piece list if the game isn't paused. This
             # weeds out erroneous results that we might get when a hand is
             # over the board placing a piece.
-            @pieces = @tracker.pieces
+            @pieces = []
+
+            @tracker.pieces.each do |piece|
+              frame.draw_rectangle(piece.rect, Color.new(255, 255, 255))
+              frame.draw_label(piece.piece.key, piece.rect.point)
+              @pieces << piece.piece.key
+            end
+
+            board_window.show(frame)
 
             # Theia.logger.warn("Shit!")
             Theia.logger.info(@pieces)

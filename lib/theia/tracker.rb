@@ -49,7 +49,7 @@ module Theia
       @occurrences.each do |occurrence|
         others = siblings(occurrence)
         if occurrence.reliability(others) >= THRESHOLD_RELIABILITY
-          pieces << occurrence.piece.key
+          pieces << occurrence
         end
       end
 
