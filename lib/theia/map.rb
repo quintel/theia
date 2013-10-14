@@ -17,6 +17,7 @@ module Theia
 
     A1_WIDTH  = 420
     A1_HEIGHT = 594
+    A1_SIZE   = Spyglass::Size.new(A1_HEIGHT, A1_WIDTH)
 
     # Internal: Initialize a new map.
     #
@@ -41,7 +42,7 @@ module Theia
 
       # Now we expand the lines to make sure unconnected contours get
       # connected.
-      bw.dilate!
+      # bw.dilate!
 
       # Get the contours (Array of Contour)
       contours = bw.contours

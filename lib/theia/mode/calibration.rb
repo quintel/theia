@@ -17,10 +17,20 @@ module Theia
       def initialize(options)
         super(options)
 
+        # Use a different background subtraction algorithm
+        @bg_subtractor = BackgroundSubtractor::MOG2.new history: 50, threshold: 8
+        100.times do
+          @frame = nil
+          while !@frame do
+            @frame = @map.frame
+          end
+          @bg_subtractor.subtract(@frame, 1.0/100)
+        end
+
         # This is the hotspot in the center of the map.
         @rect = Rect.new(
-          (@map.bounds.size.width / 2) - (RECT_SIZE / 2),
-          (@map.bounds.size.height / 2) - (RECT_SIZE / 2),
+          (Map::A1_HEIGHT) - (RECT_SIZE / 2),
+          (Map::A1_WIDTH) - (RECT_SIZE / 2),
           RECT_SIZE, RECT_SIZE
         )
       end
@@ -34,14 +44,14 @@ module Theia
       end
 
       def pieces
-        Piece.pieces data_path
+        Piece.all
       end
 
       def start
         @stage_idx = 0
         @piece_idx = 0
 
-        display = Image.new(@map.bounds.size, Image::TYPE_8UC3)
+        display = Image.new(Map::A1_SIZE, Image::TYPE_8UC3)
         loop do
           with_cycle do |frame, delta|
             display.copy!(frame)
@@ -62,7 +72,7 @@ module Theia
 
           if @piece_idx == pieces.length && @stage_idx == 0
             puts "Writing pieces!"
-            Piece.write data_path
+            Piece.write
             break
           end
         end
