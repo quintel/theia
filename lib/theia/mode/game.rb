@@ -19,7 +19,6 @@ module Theia
       end
 
       def start
-
         puts "Game started. Ready to go!"
         loop do
           with_cycle do |frame, delta|
@@ -29,7 +28,6 @@ module Theia
             @state = :running
 
             with_each_contour do |contour, mean|
-
               # Skip if we happened to catch some noise.
               next if mean.zeros?
 
@@ -39,7 +37,7 @@ module Theia
               results = piece_definitions.map { |p| p.compare(mean) }
               min     = results.min
               piece   = Piece.all[results.index min]
-              occurrence = Occurrence.new(contour.rect, piece, @cycle)
+              occurrence = Occurrence.new(contour.rect, mean, piece, @cycle)
 
               @tracker.track(occurrence)
             end

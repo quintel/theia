@@ -13,9 +13,14 @@ module Theia
 
         @capture        = Capture.new(options)
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new history: 5, sampling_rate: 1
+        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new history: 8, sampling_rate: 3
         @cycle          = 0
         @tracker        = Tracker.new
+      end
+
+      def next_cycle!
+        @tracker.next_cycle!
+        @cycle += 1
       end
 
       # Public: Grabs the next frame and prepares it for detection.
@@ -34,9 +39,9 @@ module Theia
           @frame = @map.frame
         end
 
-        beginning = Time.now
+        next_cycle!
 
-        @cycle += 1
+        beginning = Time.now
 
         @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
 
@@ -53,7 +58,7 @@ module Theia
 
         yield @frame, @delta
 
-        puts "#{ Time.now - beginning } seconds."
+        # puts "#{ Time.now - beginning } seconds."
 
         # Wait for key (but not use it) and loop after 100 ms.
         GUI.wait_key(100)

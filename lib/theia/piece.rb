@@ -15,7 +15,7 @@ module Theia
         (@color[0] - color[0]).abs ** 3 + # Lighting factor (less important)
         (@color[1] - color[1]).abs ** 4 + # Color dimension 1
         (@color[2] - color[2]).abs ** 4   # Color dimension 2
-      ) / 2000
+      ) / 92_050 # Max value for the above operation.
     end
 
     def to_h
