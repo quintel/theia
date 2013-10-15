@@ -1,6 +1,6 @@
 module Theia
   class Tracker
-    DISTANCE_THRESHOLD    = 40
+    DISTANCE_THRESHOLD    = 10
     THRESHOLD_RELIABILITY = 0.8
     THRESHOLD_DELETION    = 10
 

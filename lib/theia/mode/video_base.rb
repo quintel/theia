@@ -4,7 +4,7 @@ module Theia
       BACKGROUND_FRAMES     = 50
       LEARNING_RATE         = 0.01
       BG_THRESHOLD          = 50
-      EROSION_AMOUNT        = 2
+      EROSION_AMOUNT        = 6
       IGNORE_AREA_THRESHOLD = 300
       ERODE_PIECE_AMOUNT    = 2
 
