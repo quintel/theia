@@ -43,7 +43,7 @@ module Theia
       # If a piece is marked for deletion, return 0. This ensures that
       # it is removed when the cleanup comes through.
       if @deletion
-        Theia.logger.info "#{ @piece.key } is marked for deletion."
+        Theia.logger.debug "#{ @piece.key } is marked for deletion."
         return 0
       end
 
@@ -54,14 +54,14 @@ module Theia
       # Remove the distance to the closest piece's color.
       # reliability -= @piece.compare(color)
 
-      Theia.logger.info "Color spotted #{ @color.to_a }"
-      Theia.logger.info "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
+      Theia.logger.debug "Color spotted #{ @color.to_a }"
+      Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
 
       # A piece loses 15% of reliability for every sibling
       reliability = 0 if siblings.size > 4
 
       if reliability < Tracker::THRESHOLD_RELIABILITY
-        Theia.logger.info "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
+        Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       end
 
       reliability

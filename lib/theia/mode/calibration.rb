@@ -33,6 +33,10 @@ module Theia
           (Map::A1_WIDTH) - (RECT_SIZE / 2),
           RECT_SIZE, RECT_SIZE
         )
+
+        if Theia.logger.level > Log4r::INFO
+          Theia.logger.level = Log4r::INFO
+        end
       end
 
       def board_window
@@ -71,7 +75,7 @@ module Theia
           end
 
           if @piece_idx == pieces.length && @stage_idx == 0
-            puts "Writing pieces!"
+            Theia.logger.info "Writing pieces!"
             Piece.write
             break
           end
@@ -79,7 +83,7 @@ module Theia
       end
 
       def waiting_stage(frame, delta)
-        puts "Waiting for piece #{ pieces[@piece_idx].key }"
+        Theia.logger.info "Waiting for piece #{ pieces[@piece_idx].key }"
         with_each_contour do |contour, mean|
           if mean[0] + mean[1] + mean[2] > 100
             next_stage!
@@ -88,13 +92,13 @@ module Theia
       end
 
       def found_stage(frame, delta)
-        puts "Remove hand."
+        Theia.logger.info "Remove hand."
         GUI::wait_key(3000)
         next_stage!
       end
 
       def training_stage(frame, delta)
-        puts "Training..."
+        Theia.logger.info "Training..."
         with_each_contour do |contour, mean|
           pieces[@piece_idx].color = mean
           next_stage!
@@ -102,7 +106,7 @@ module Theia
       end
 
       def remove_stage(frame, delta)
-        puts "Remove the model."
+        Theia.logger.info "Remove the model."
         return unless delta.mean.zeros?
         next_stage!
         next_piece!

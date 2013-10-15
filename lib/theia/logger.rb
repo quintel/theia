@@ -4,7 +4,11 @@ module Theia
   def self.logger
     @logger ||= begin
       logger = Log4r::Logger.new('Theia')
-      logger.add(Log4r::Outputter.stderr)
+
+      outputter           = Log4r::Outputter.stdout
+      outputter.formatter = Log4r::PatternFormatter.new(pattern: '%l - %x - %m')
+
+      logger.add(outputter)
 
       logger
     end
