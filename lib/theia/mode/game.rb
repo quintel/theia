@@ -43,6 +43,10 @@ module Theia
               # Skip if we happened to catch some noise.
               next if mean.zeros?
 
+              if @debug
+                frame.draw_rectangle(contour.rect, Color.new(255, 0, 0))
+              end
+
               # Calculate the mean color proximity with the piece definitions.
               # Because we go by probability, we grab the most likely one by
               # the lowest distance between colours.
