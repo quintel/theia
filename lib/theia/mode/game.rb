@@ -15,23 +15,31 @@ module Theia
       end
 
       def board_window
-        @board_window ||= GUI::Window.new("Board")
+        @board_window ||= begin
+          window = GUI::Window.new("Board")
+          window.on_click do |x, y|
+            piece = @tracker.pieces.detect { |p| p.contains?(x, y) }
+            next unless piece
+
+            Theia.logger.info("Removing #{ piece.piece.key } as per user request.")
+            piece.mark_for_deletion!(@cycle)
+          end
+
+          window
+        end
       end
 
       def start
-        logger = Logger.new(@options[:verbose] ? $stdout : nil)
+        Theia.logger.info "Game started. Ready to go!"
+        cycle = 0
 
         loop do
-          pieces = []
-
           with_cycle do |frame, delta|
-            board_window.show(frame)
+            Log4r::NDC.push("##{ cycle += 1 }")
+
             delta_window.show(delta)
 
-            @state = :running
-
             with_each_contour do |contour, mean|
-
               # Skip if we happened to catch some noise.
               next if mean.zeros?
 
@@ -40,19 +48,30 @@ module Theia
               # the lowest distance between colours.
               results = piece_definitions.map { |p| p.compare(mean) }
               min     = results.min
-              piece   = piece_definitions[results.index min]
+              piece   = Piece.all[results.index min]
+              occurrence = Occurrence.new(contour.rect, mean, piece, @cycle)
 
-              pieces << piece.key
+              @tracker.track(occurrence)
             end
 
             # Only overwrite the piece list if the game isn't paused. This
             # weeds out erroneous results that we might get when a hand is
             # over the board placing a piece.
-            @pieces = pieces if @state != :paused
+            @pieces = []
 
-            logger.log(pieces)
+            @tracker.pieces.each do |piece|
+              frame.draw_rectangle(piece.rect, Color.new(255, 255, 255))
+              frame.draw_label(piece.piece.key, piece.rect.point)
+              @pieces << piece.piece.key
+            end
+
+            board_window.show(frame)
+
+            Theia.logger.info(@pieces)
 
             write_state!
+
+            Log4r::NDC.pop
           end
         end
       end
@@ -68,7 +87,9 @@ module Theia
           pieces: @pieces.sort
         }
 
-        File.write "#{ data_path }/state.yml", state.to_yaml
+        path = File.expand_path('../../../../data/', __FILE__)
+
+        File.write "#{ path }/state.yml", state.to_yaml
       end
 
     end

@@ -12,8 +12,12 @@ module Theia
   # Game map handler. Detects map boundaries.
   class Map
 
-    A0_WIDTH  = 841
-    A0_HEIGHT = 1189
+    A0_WIDTH  = 840
+    A0_HEIGHT = 1_188
+
+    A1_WIDTH  = 420
+    A1_HEIGHT = 594
+    A1_SIZE   = Spyglass::Size.new(A1_HEIGHT, A1_WIDTH)
 
     # Internal: Initialize a new map.
     #
@@ -38,31 +42,34 @@ module Theia
 
       # Now we expand the lines to make sure unconnected contours get
       # connected.
-      bw.dilate!
+      # bw.dilate!
 
       # Get the contours (Array of Contour)
       contours = bw.contours
 
       # Only get closed contours
-      contours.select!  { |c| c.convex?             }
+      contours.select!  { |c| c.convex? }
 
       # Ignore small contours
-      contours.select!  { |c| c.rect.area > 500_000 }
+      contours.select!  { |c| c.rect.area > (@raw.cols * @raw.rows) / 3 }
 
       # Sort by size, we wanna have the last one!
-      contours.sort_by! { |c| -1 * c.rect.area      }
+      contours.sort_by! { |c| -1 * c.rect.area }
 
       # Return nil if nothing is detected (SNAFU)
-      return if contours.empty?
+      if contours.empty?
+        Theia.logger.warn("WARNING: Cannot find the map"); return nil
+      end
 
       # We wanna have the last (i.e. biggest) one!
       contour = contours.last
 
       # Return nil if we cannot find the corners
       if corners = contour.corners
-
         # Straighten up that image!
-        @raw.warp_perspective(corners, Size.new(A0_HEIGHT, A0_WIDTH))
+        @raw.warp_perspective(corners, Size.new(A1_HEIGHT, A1_WIDTH))
+      else
+        Theia.logger.warn("Cannot find the corners of the map")
       end
     end
   end

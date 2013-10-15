@@ -19,3 +19,4 @@ doc/
 
 # Theia artifacts
 data/*.yml
+data/tmp/*

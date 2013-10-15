@@ -30,7 +30,8 @@ module Theia
         super(options)
 
         @channel = EM::Channel.new
-        Watcher.path = data_path
+        @path = File.expand_path('../../../../data/', __FILE__)
+        Watcher.path = @path
         Watcher.channel = @channel
       end
 
@@ -49,7 +50,7 @@ module Theia
             end
           end
 
-          EM.watch_file("#{ data_path }/state.yml", Watcher)
+          EM.watch_file("#{ @path }/state.yml", Watcher)
           puts <<-MSG
 Running on #{ @options[:host] || '0.0.0.0' }:#{ @options[:port] || 8080 }...
 Press Ctrl+C to stop.

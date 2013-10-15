@@ -1,5 +1,6 @@
 module Theia
   class Piece
+
     attr_accessor :key, :color
 
     def initialize(attributes)
@@ -14,7 +15,7 @@ module Theia
         (@color[0] - color[0]).abs ** 3 + # Lighting factor (less important)
         (@color[1] - color[1]).abs ** 4 + # Color dimension 1
         (@color[2] - color[2]).abs ** 4   # Color dimension 2
-      ) / 2000
+      ) / 92_050 # Max value for the above operation.
     end
 
     def to_h
@@ -24,17 +25,29 @@ module Theia
     #------- CLASS METHODS ---------------------------------------------------
 
     # Public: Returns all the pieces.
-    def self.pieces(path)
+    def self.all
       @@pieces ||= begin
-        pieces = YAML.load_file "#{ path }/pieces.yml"
+        pieces = YAML.load_file(self.data_path)
         pieces.map { |p| Piece.new(p) }
       end
     end
 
-    # Public: writes all the pieces back to disk.
-    def self.write(path)
-      result = @@pieces.map { |p| p.to_h }
-      File.write "#{ path }/pieces.yml", result.to_yaml
+    # Returns the file_path for the data_file
+    def self.data_path
+      File.expand_path('../../../data/pieces.yml', __FILE__)
     end
+
+    # Public: Returns the Piece that best matches **color**
+    def self.find_by_color(color)
+      self.all.sort_by { |p| p.compare(color) }.first
+    end
+
+    # Public: writes all the pieces back to disk
+    def self.write
+      result = self.all.map { |p| p.to_h }
+      File.write self.data_path, result.to_yaml
+    end
+
   end
+
 end

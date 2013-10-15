@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    coderay (1.0.9)
     colored (1.2)
     columnize (0.3.6)
     debugger (1.6.1)
@@ -14,8 +15,35 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.5.3)
     eventmachine (1.0.3)
+    ffi (1.9.0)
+    formatador (0.2.4)
+    guard (1.8.1)
+      formatador (>= 0.2.4)
+      listen (>= 1.0.0)
+      lumberjack (>= 1.0.2)
+      pry (>= 0.9.10)
+      thor (>= 0.14.6)
+    guard-rspec (3.0.2)
+      guard (>= 1.8)
+      rspec (~> 2.13)
     http_parser.rb (0.5.3)
+    listen (1.2.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+      rb-kqueue (>= 0.2)
+    log4r (1.1.10)
+    lumberjack (1.0.4)
+    method_source (0.8.2)
+    pry (0.9.12.2)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     rake (10.1.0)
+    rb-fsevent (0.9.3)
+    rb-inotify (0.9.0)
+      ffi (>= 0.5.0)
+    rb-kqueue (0.2.0)
+      ffi (>= 0.5.0)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -27,7 +55,8 @@ GEM
     ruby_parser (3.2.2)
       sexp_processor (~> 4.1)
     sexp_processor (4.3.0)
-    spyglass (0.0.3)
+    slop (3.4.6)
+    spyglass (0.0.5)
     thor (0.18.1)
     tomdoc (0.2.5)
       colored
@@ -41,9 +70,12 @@ DEPENDENCIES
   debugger
   em-websocket
   eventmachine
+  guard
+  guard-rspec
+  log4r
   rake
   rspec
-  spyglass (= 0.0.3)
+  spyglass (= 0.0.5)
   thor
   tomdoc
   yajl-ruby
