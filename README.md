@@ -43,6 +43,8 @@ installed on your mac, it's a simple matter of running:
     git checkout ae74fe9 opencv.rb
     brew install opencv --with-tbb
 
+## Hit it!
+
 To get a fresh check out, and get the pieces information run:
 
     git clone git@github.com:quintel/theia.git
