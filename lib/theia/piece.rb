@@ -28,7 +28,7 @@ module Theia
     def self.all
       @@pieces ||= begin
         pieces = YAML.load_file(self.data_path)
-        pieces.map { |p| Piece.new(p) }
+        pieces.map { |p| Piece.new(p) }.sort_by { |p| p.key }
       end
     end
 
