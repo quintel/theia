@@ -41,7 +41,6 @@ module Theia
         end
 
         next_cycle!
-        Theia.logger.debug("Starting frame #{ @cycle }")
 
         @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
 
