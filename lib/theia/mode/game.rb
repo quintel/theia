@@ -52,9 +52,7 @@ module Theia
 
             board_window.show(frame)
 
-            # Theia.logger.warn("Shit!")
             Theia.logger.info(@pieces)
-            # Theia.logger.debug("Shit!")
 
             write_state!
           end
