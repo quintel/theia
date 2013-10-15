@@ -17,7 +17,7 @@ module Theia
       def board_window
         @board_window ||= begin
           window = GUI::Window.new("Board")
-          window.on_click do |x, y|
+          window.on_right_click do |x, y|
             piece = @tracker.pieces.detect { |p| p.contains?(x, y) }
             next unless piece
 
