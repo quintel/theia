@@ -36,6 +36,8 @@ module Theia
       end
 
       def start
+        super
+
         # Makes for more efficient file watching on OS X
         EventMachine.kqueue = EventMachine.kqueue?
 

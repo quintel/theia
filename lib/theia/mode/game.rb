@@ -33,6 +33,8 @@ module Theia
       end
 
       def start
+        super
+
         Theia.logger.info "Game started. Ready to go!"
 
         loop do

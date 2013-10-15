@@ -24,6 +24,18 @@ module Theia
         @cycle += 1
       end
 
+      def start
+        if @debug
+          path = File.expand_path('../../../../data/tmp', __FILE__)
+
+          Dir.mkdir(path) unless Dir.exist?(path)
+
+          Dir.foreach(path) do |file|
+            File.delete("#{ path }/#{ file }") if file.end_with?('.png')
+          end
+        end
+      end
+
       # Public: Grabs the next frame and prepares it for detection.
       #
       # The process is as follows:
@@ -58,6 +70,7 @@ module Theia
         # Save stuff
         if @debug
           path = File.expand_path('../../../../data/tmp', __FILE__)
+
           @frame.write "#{ path }/#{ "%04i" % @cycle }-frame.png"
           @delta.write "#{ path }/#{ "%04i" % @cycle }-delta.png"
         end

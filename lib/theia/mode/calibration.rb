@@ -52,6 +52,8 @@ module Theia
       end
 
       def start
+        super
+
         @stage_idx = 0
         @piece_idx = 0
 
