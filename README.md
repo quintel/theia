@@ -1,6 +1,17 @@
 Theia
 =====
 
+# Installing the Camera
+
+Make sure you have [Webcam Settings](https://itunes.apple.com/us/app/webcam-settings/id533696630?mt=12) installed.
+
+**Warning:** make sure that Webcam Settings is **not running**. (Quit it).
+
+Then run the following commands to update the settings to the general Theia settings:
+
+    mkdir -p ~/Library/Containers/com.mactaris.Webcam-Settings/Data/Library/Preferences/
+    cp data/com.mactaris.Webcam-Settings.plist ~/Library/Containers/com.mactaris.Webcam-Settings/Data/Library/Preferences/
+
 # How to run
 
 This project depends on OpenCV. If you have homebrew installed on your mac, it's a simple matter of running
