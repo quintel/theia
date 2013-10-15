@@ -66,5 +66,16 @@ module Theia
 
       reliability
     end
+
+    def to_h
+      {
+        rect:       [@rect.x, @rect.y, @rect.width, @rect.height],
+        color:      @color.to_a,
+        piece:      @piece.to_h,
+        last_seen:  @last_seen,
+        first_seen: @first_seen,
+        deletion:   @deletion
+      }
+    end
   end
 end

@@ -8,6 +8,9 @@ module Theia
         @pieces = []
         @state  = :stopped
         @grace  = 0
+        @cycle  = 0
+
+        resume_game! if options[:resume]
       end
 
       def delta_window
@@ -31,11 +34,10 @@ module Theia
 
       def start
         Theia.logger.info "Game started. Ready to go!"
-        cycle = 0
 
         loop do
           with_cycle do |frame, delta|
-            Log4r::NDC.push("##{ cycle += 1 }")
+            Log4r::NDC.push("##{ @cycle }")
 
             delta_window.show(delta)
 
@@ -71,6 +73,16 @@ module Theia
 
             write_state!
 
+            case GUI::wait_key(100)
+            when 88 # X - Clear all
+              clear_state!
+              break
+
+            when 83 # S - Save and quit
+              save_game_and_quit!
+              break
+            end
+
             Log4r::NDC.pop
           end
         end
@@ -90,6 +102,53 @@ module Theia
         path = File.expand_path('../../../../data/', __FILE__)
 
         File.write "#{ path }/state.yml", state.to_yaml
+      end
+
+      def save_game_and_quit!
+        Theia.logger.info "Saving game and exiting..."
+        game = @tracker.to_h
+
+        path = File.expand_path('../../../../data/', __FILE__)
+
+        File.write "#{ path }/saved.yml", game.to_yaml
+        exit 0
+      end
+
+      def resume_game!
+        begin
+        Theia.logger.info "Resuming game"
+        path = File.expand_path('../../../../data/', __FILE__)
+
+        tracker = YAML.load_file("#{ path }/saved.yml")
+
+        @tracker = Tracker.new
+
+        @tracker.cycle  = tracker[:cycle]
+        @cycle          = tracker[:cycle]
+
+        tracker[:occurrences].each do |o|
+          rect  = Rect.new(*o[:rect])
+          color = Color.new(*o[:color])
+
+          piece = Piece.all.detect { |p| p.key == o[:piece][:key] }
+
+          occurrence = Occurrence.new(rect, color, piece, o[:cycle])
+          occurrence.last_seen   = o[:last_seen]
+          occurrence.first_seen  = o[:first_seen]
+
+          @tracker.occurrences << occurrence
+        end
+        rescue Errno::ENOENT => ex
+          Theia.logger.info "Could not find save file. Quitting..."
+          exit 1
+        end
+      end
+
+      def clear_state!
+        Theia.logger.info "Clearing state..."
+
+        @tracker = Tracker.new
+        @tracker.cycle = @cycle
       end
 
     end
