@@ -18,6 +18,11 @@ module Theia
       Point.new(x, y)
     end
 
+    def contains?(x, y)
+      x >= @rect.x && x <= (@rect.x + @rect.width) &&
+      y >= @rect.y && y <= (@rect.y + @rect.height)
+    end
+
     def fresh?(cycle)
       @last_seen == cycle
     end

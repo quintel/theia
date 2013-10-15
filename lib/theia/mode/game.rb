@@ -15,7 +15,18 @@ module Theia
       end
 
       def board_window
-        @board_window ||= GUI::Window.new("Board")
+        @board_window ||= begin
+          window = GUI::Window.new("Board")
+          window.on_click do |x, y|
+            piece = @tracker.pieces.detect { |p| p.contains?(x, y) }
+            next unless piece
+
+            Theia.logger.info("Removing #{ piece.piece.key } as per user request.")
+            piece.mark_for_deletion!(@cycle)
+          end
+
+          window
+        end
       end
 
       def start
