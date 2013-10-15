@@ -1,6 +1,3 @@
-Theia
-=====
-
 # Dependencies
 
 ## Camera
