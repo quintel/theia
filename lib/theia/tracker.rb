@@ -74,5 +74,12 @@ module Theia
 
       siblings
     end
+
+    def to_h
+      {
+        cycle:        @cycle,
+        occurrences:  @occurrences.map(&:to_h)
+      }
+    end
   end
 end

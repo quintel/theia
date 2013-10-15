@@ -3,15 +3,19 @@ require 'theia'
 module Theia
   class CLI < Thor
     default_task :game
-    class_option "verbose",   type: :boolean, banner: "Enable verbose output mode", aliases: '-v'
     class_option "data-dir",  type: :string,  banner: "Directory where the data files reside"
     class_option "debug",     type: :boolean, banner: "Saves frames to a temporary directory"
+    class_option "resume",    type: :boolean, banner: "Resume a previous game"
+    class_option "verbose",   type: :boolean, banner: "Enable verbose output mode", aliases: '-v'
 
     desc "game", "Starts up the game"
     method_option "source", type: :string, banner: "Specify which video source to use"
     long_desc <<-D
       Game starts up the game server. It's responsible for controlling the video capture,
       keeping track of what's going on in the map, and for witing the state down to files.
+
+      Theia also supports some handy shortcuts, such as: mark a piece for deletion (Right-click),
+      save the game and quit (S) or reset the board (X).
     D
     def game
       game = Mode::Game.new(options)
