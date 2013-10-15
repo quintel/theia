@@ -5,12 +5,29 @@ Theia
 
 Make sure you have [Webcam Settings](https://itunes.apple.com/us/app/webcam-settings/id533696630?mt=12) installed.
 
-**Warning:** make sure that Webcam Settings is **not running**. (Quit it).
+## Adapt settings:
 
-Then run the following commands to update the settings to the general Theia settings:
+#### Basic:
 
-    mkdir -p ~/Library/Containers/com.mactaris.Webcam-Settings/Data/Library/Preferences/
-    cp data/com.mactaris.Webcam-Settings.plist ~/Library/Containers/com.mactaris.Webcam-Settings/Data/Library/Preferences/
+* Auto exposure: manual
+* Exposure time: 100
+* Gain: 0
+* Brightness, constract, saturation and sharpness: 128 (in the middle)
+* White balance temperature: 4250
+
+#### Advances:
+
+* Power line frequency: disabled
+* backlight compensation: off
+* Focus: Turn off auto: 0
+* Zoom: minimum (100)
+* Pan: 0
+* Tilt: 0
+
+#### Preferences:
+
+* Read auto settings: disabled
+* Write every settings to webcam: every 0.5 seconds
 
 # How to run
 
