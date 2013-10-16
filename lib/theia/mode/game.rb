@@ -1,4 +1,5 @@
 module Theia
+
   module Mode
     class Game < VideoBase
 
@@ -164,4 +165,5 @@ module Theia
       end
     end # Game
   end # Mode
+
 end # Theia

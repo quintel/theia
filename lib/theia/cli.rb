@@ -1,6 +1,7 @@
 require 'theia'
 
 module Theia
+
   class CLI < Thor
     default_task :game
     class_option "blank",     type: :boolean, banner: "Starts the game without any initial pieces"
@@ -46,4 +47,5 @@ module Theia
       websocket.start
     end
   end # CLI
+
 end # Theia

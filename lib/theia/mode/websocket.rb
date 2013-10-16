@@ -2,14 +2,19 @@ module Theia
 
   module Mode
     class Watcher < EventMachine::FileWatch
+      # Public: Set the channel to which the watcher broadcasts changes.
       def self.channel=(channel)
         @@channel = channel
       end
 
+      # Internal: File modified callback. Gets triggered whenever 
+      #           `data/state.yml` is changed.
       def file_modified
         broadcast_state
       end
 
+      # Internal: Broadcasts the content of the state file, formatted as
+      #           JSON.
       def broadcast_state
         state = YAML.load_file(Theia.data_path_for('state.yml'))
         @@channel.push(state.to_json)

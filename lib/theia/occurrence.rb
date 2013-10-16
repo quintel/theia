@@ -1,4 +1,5 @@
 module Theia
+
   class Occurrence
     attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion
 
@@ -11,6 +12,7 @@ module Theia
       @deletion   = false
     end
 
+    # Public: Returns the center point for the rect containing the occurrence.
     def center
       x = @rect.x + (@rect.width / 2)
       y = @rect.y + (@rect.height / 2)
@@ -18,20 +20,27 @@ module Theia
       Point.new(x, y)
     end
 
+    # Public: Returns true if a point is contained within the bounding rect.
     def contains?(x, y)
       x >= @rect.x && x <= (@rect.x + @rect.width) &&
       y >= @rect.y && y <= (@rect.y + @rect.height)
     end
 
+    # Public: Returns true if an occurrence has not been "swallowed" into the
+    #         map yet.
     def fresh?(cycle)
       @last_seen == cycle
     end
 
+    # Public: Marks an occurrence for deletion.
     def mark_for_deletion!(cycle)
       @deletion   = true
       @last_seen  = cycle
     end
 
+    # Public: Euclidian distance between this and another occurrence. This is
+    #         calculated using the center points of the occurrences' bounding
+    #         rects.
     def distance(occurrence)
       p1 = self.center
       p2 = occurrence.center
@@ -39,6 +48,9 @@ module Theia
       Math.sqrt( (p2.x - p1.x)**2 + (p2.y - p1.y)**2 ).abs
     end
 
+    # Public: Returns a reliability score for an occurrence. The range of
+    #         possible values goes from 0 (not reliable) to 1 (absolutely
+    #         sure this is the right thing)
     def reliability(siblings)
       # If a piece is marked for deletion, return 0. This ensures that
       # it is removed when the cleanup comes through.
@@ -50,9 +62,6 @@ module Theia
       # The initial score is based on the number of frames the piece
       # has been present for. 4 or more frames gives it full marks.
       reliability = [@last_seen - @first_seen, 4].min / 4.0
-
-      # Remove the distance to the closest piece's color.
-      # reliability -= @piece.compare(color)
 
       Theia.logger.debug "Color spotted #{ @color.to_a }"
       Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
@@ -92,4 +101,5 @@ module Theia
       occurrence
     end
   end # Occurrence
+
 end # Theia

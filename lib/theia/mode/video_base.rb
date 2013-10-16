@@ -1,4 +1,5 @@
 module Theia
+
   module Mode
     class VideoBase < Base
       BACKGROUND_FRAMES     = 50
@@ -116,7 +117,8 @@ module Theia
           yield contour, color
         end
       end
-    end
-  end
-end
+    end # VideoBase
+  end # Mode
+
+end # Theia
 

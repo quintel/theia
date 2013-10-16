@@ -1,12 +1,3 @@
-class Float
-  def approx(other, relative_epsilon=Float::EPSILON, epsilon=Float::EPSILON)
-    difference = other - self
-    return true if difference.abs <= epsilon
-    relative_error = (difference / (self > other ? self : other)).abs
-    return relative_error <= relative_epsilon
-  end
-end
-
 module Theia
 
   # Game map handler. Detects map boundaries.
@@ -28,6 +19,13 @@ module Theia
       @raw  = Image.new
     end
 
+    # Public: Given a raw feed, this method does a few things:
+    #
+    #         - Finds the boundaries of the map
+    #         - Crops the raw frame into a region of interest
+    #         - Corrects perspective
+    #
+    #         Returns `nil` when it can't detect a valid map area
     def frame
       @cap >> @raw
 
@@ -41,18 +39,14 @@ module Theia
       # Canny is used to detect color changing boundaries.
       bw.canny! 100, 100
 
-      # Now we expand the lines to make sure unconnected contours get
-      # connected.
-      # bw.dilate!
-
       # Get the contours (Array of Contour)
       contours = bw.contours
 
       # Only get closed contours
-      contours.select!  { |c| c.convex? }
+      contours.select! { |c| c.convex? }
 
       # Ignore small contours
-      contours.select!  { |c| c.rect.area > (@raw.cols * @raw.rows) / 3 }
+      contours.select! { |c| c.rect.area > (@raw.cols * @raw.rows) / 3 }
 
       # Sort by size, we wanna have the last one!
       contours.sort_by! { |c| -1 * c.rect.area }
@@ -74,4 +68,5 @@ module Theia
       end
     end
   end # Map
+
 end # Theia

@@ -50,4 +50,5 @@ module Theia
       File.write self.data_path, result.to_yaml
     end
   end # Piece
+
 end # Theia

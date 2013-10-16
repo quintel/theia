@@ -1,4 +1,5 @@
 module Theia
+
   module Mode
     class Calibration < VideoBase
       # Different stages at which the calibration process works
@@ -125,6 +126,7 @@ module Theia
       def next_piece!
         @piece_idx += 1
       end
-    end
-  end
-end
+    end # Calibration
+  end # Mode
+
+end # Theia
