@@ -31,6 +31,11 @@ module Theia
       end
 
       def start
+
+        colors = Hash.new
+
+        Piece.all.each { |p| colors[p.key] = [] }
+
         Theia.logger.info "Starting..."
 
         Theia.logger.info "Please put the pieces on the map from bottom to" +
@@ -46,25 +51,45 @@ module Theia
 
         display = Image.new(Map::A1_SIZE, Image::TYPE_8UC3)
 
-        loop do
-          with_cycle do |frame, delta|
-            display.copy!(frame)
-            board_window.show(display)
-            delta_window.show(delta)
+        with_cycle do |frame, delta|
 
-            Theia.logger.info "I found #{ contours.size } # of contours."
+          display.copy!(frame)
+          board_window.show(display)
+          delta_window.show(delta)
 
-            contours.sort_by! { |c| c.rect.x }
+          Theia.logger.info "I found #{ contours.size } # of contours."
 
-            contours.each do |contour|
-              mean = grab_color_from_contour(contour)
-              piece = Piece.find_by_color(mean)
-              Theia.logger.info "FOUND! contour with x: #{ contour.rect.x } with color: #{ mean.to_a }\n" +
-                                "I think it is a #{ piece.key } actually."
-            end
+          unless contours.size == Piece.all.size
+            raise("I found #{ contours.size } on the board, " +
+                  "but #{ Piece.all.size } on disk. " +
+                  "Please add/remove pieces to align numbers.")
           end
 
-          exit
+          contours.sort_by! { |c| c.rect.y }
+
+          contours.each_with_index do |contour, index|
+            piece = Piece.all[index]
+
+            color = grab_color_from_contour(contour)
+            Theia.logger.info "FOUND! contour for #{ Piece.all[index].key } with y: #{ contour.rect.y } with color: #{ color.to_a }\n"
+
+            colors[piece.key] << color
+          end
+
+          # We have enough colors
+          if colors.all? { |k, v| v.size > 5 }
+
+            # TODO: Calculate average color
+            colors.each do |key, array|
+              piece = Piece.find(key)
+              piece.color = array.first.to_a
+              piece.save!
+            end
+
+            Theia.logger.info "Done! New colors have been saved to disk!"
+            break
+          end
+
         end
       end
 
