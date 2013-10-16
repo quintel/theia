@@ -37,7 +37,8 @@ module Theia
     #------- CLASS METHODS ---------------------------------------------------
 
     # Public: Returns all the pieces.
-    def self.all
+    def self.all(options = {})
+      @@pieces = nil if options[:force]
       @@pieces ||= begin
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
         pieces.map { |p| Piece.new(p) }.sort_by { |p| p.key }
