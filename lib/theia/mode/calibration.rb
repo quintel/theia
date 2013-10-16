@@ -2,8 +2,7 @@ module Theia
   module Mode
     class Calibration < VideoBase
 
-      RECT_SIZE = 100
-      MARGIN = 50
+      # How many frames do we want the background to 'adapt' and stabilize.
       LEARN_FRAMES = 75
 
       # How many times to sample a colour during calibration before we have
