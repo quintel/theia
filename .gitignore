@@ -18,5 +18,6 @@ _yardoc
 doc/
 
 # Theia artifacts
-data/*.yml
+data/state.yml
+data/saved.yml
 data/tmp/*
