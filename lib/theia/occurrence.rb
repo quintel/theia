@@ -1,6 +1,11 @@
 module Theia
 
   class Occurrence
+
+    # Number of times that an occurrence has to be tracked in order to be
+    # considered a valid one.
+    MINIMUM_APPEARENCES = 4
+
     attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion
 
     def initialize(rect, color, piece, cycle)
@@ -66,12 +71,15 @@ module Theia
 
       # The initial score is based on the number of frames the piece
       # has been present for. 4 or more frames gives it full marks.
-      reliability = [@last_seen - @first_seen, 4].min / 4.0
+      reliability  = [@last_seen - @first_seen, MINIMUM_APPEARENCES].min
+      reliability /= MINIMUM_APPEARENCES.to_f
 
       Theia.logger.debug "Color spotted #{ @color.to_a }"
       Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
 
-      # A piece loses 15% of reliability for every sibling
+      # A piece loses all reliability if it shows up with 4 more occurrences.
+      # This might happen in a situation where shadows are cast into the map
+      # and the background subtractor does't have enough time to adapt to it.
       reliability = 0 if siblings.size > 4
 
       if reliability < Tracker::RELIABILITY_THRESHOLD

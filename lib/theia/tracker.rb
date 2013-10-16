@@ -20,27 +20,42 @@ module Theia
       @cycle = 0
     end
 
+    # Public: Increments the cycle
     def next_cycle!
       @cycle += 1
     end
 
+    # Public: Given a new occurrence, this method tries to figure out:
+    #
+    #         - If it already exists on the map, marking the current
+    #           cycle as the last one where the occurrence was seen.
+    #
+    #         - If it hasn't been last seen recently, the tracker marks
+    #           an occurrence up for deletion. For this to work, the
+    #           tracker also takes under consideration the area ratio
+    #           between the first time a piece was recorded and the
+    #           time where it reappears on the delta.
     def track(occurrence)
-      piece = @occurrences.detect do |o|
-        o.distance(occurrence) < DISTANCE_THRESHOLD
-      end
-
-      if !piece
-        @occurrences << occurrence
-        return
-      end
+      # Try to find an existing occurrence that is within a very close
+      # distance to the one that is being tracked. If none is found,
+      # add it to the occurrences and return.
+      piece = @occurrences.detect { |o| o.distance(occurrence) < DISTANCE_THRESHOLD }
+      @occurrences << occurrence and return if !piece
 
       if !piece.fresh?(@cycle) && (piece.last_seen + 1) < occurrence.first_seen
+        # If this occurrence has previously been reported, and has since
+        # been "swallowed" in the background subtractor, try to figure out
+        # whether the area ratio between the original rect and the new one
+        # is within an acceptable margin. This prevents shadows from
+        # accidentaly removing pieces.
         min, max = [piece.rect.area, occurrence.rect.area].sort
 
-        if MATCH_RATIO_RANGE.include? max / min
+        if MATCH_RATIO_RANGE.include? (max.to_f / min.to_f)
           piece.mark_for_deletion!(@cycle)
         end
       else
+        # The piece has been recently tracked, so just increment the cycle
+        # at which it was last seen.
         piece.last_seen += 1
       end
     end
@@ -64,43 +79,36 @@ module Theia
       end
     end
 
+    # Public: Return valid (detected and reliable) results to be reported
+    #         to the frontend.
     def pieces
       cleanup!
 
-      pieces = []
-      @occurrences.each do |occurrence|
+      @occurrences.select do |occurrence|
         others = siblings(occurrence)
-        if occurrence.reliability(others) >= RELIABILITY_THRESHOLD
-          pieces << occurrence
-        end
+        occurrence.reliability(others) >= RELIABILITY_THRESHOLD
       end
-
-      pieces
     end
 
+    # Public: Return all occurrences that showed up in the same cycle as
+    #         the passed object.
     def siblings(occurrence)
-      siblings = []
-      @occurrences.each do |o|
-        next if o == occurrence
-        next if o.first_seen != occurrence.first_seen
-
-        siblings << o
+      @occurrences.select do |o|
+        o != occurrence && o.first_seen == occurrence.first_seen
       end
-
-      siblings
     end
 
     # Public: Represents the tracker as a hash
     def to_h
       {
-        cycle:        @cycle,
-        occurrences:  @occurrences.map(&:to_h)
+        cycle:       @cycle,
+        occurrences: @occurrences.map(&:to_h)
       }
     end
 
     # Public: Builds the tracker from a hash
     def self.from_h(hash)
-      tracker = Tracker.new
+      tracker       = Tracker.new
       tracker.cycle = hash[:cycle]
 
       tracker.occurrences = hash[:occurrences].map do |o|
