@@ -42,9 +42,7 @@ module Theia
         Theia.logger.info "Game started. Ready to go!"
 
         loop do
-          with_cycle do |frame, delta|
-            Log4r::NDC.push("##{ @cycle }")
-
+          with_cycle(@cycle) do |frame, delta|
             delta_window.show(delta)
 
             with_each_contour do |contour, mean|
@@ -92,8 +90,6 @@ module Theia
               save_game_and_quit!
               break
             end
-
-            Log4r::NDC.pop
           end
         end
       end

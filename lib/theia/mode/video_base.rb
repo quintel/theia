@@ -44,7 +44,7 @@ module Theia
       # - Run a threshold on the background to eliminate shadows
       # - Erode and dilate the delta image as a second step to remove
       #   shadows.
-      def with_cycle
+      def with_cycle(cycle_number = nil)
         @frame = nil
 
         # Loop until we get a (perspective corrected) frame from the map.
@@ -53,6 +53,8 @@ module Theia
         end
 
         next_cycle!
+
+        Log4r::NDC.push("##{ @cycle }") if cycle_number
 
         @delta = @bg_subtractor.subtract(@frame, LEARNING_RATE)
 
@@ -79,6 +81,8 @@ module Theia
 
         # Wait for key (but not use it) and loop after 100 ms.
         debugger if GUI.wait_key(100) == 100
+      ensure
+        Log4r::NDC.pop if cycle_number
       end
 
       # Public: Iterates through contours and yields them.
