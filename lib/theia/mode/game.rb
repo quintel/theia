@@ -10,7 +10,11 @@ module Theia
         @grace  = 0
         @cycle  = 0
 
-        resume_game! if options[:resume]
+        if options[:resume]
+          resume_game!
+        elsif !options[:blank]
+          setup_game!
+        end
       end
 
       def delta_window
@@ -119,7 +123,6 @@ module Theia
       end
 
       def resume_game!
-        begin
         Theia.logger.info "Resuming game"
         path = File.expand_path('../../../../data/', __FILE__)
 
@@ -142,10 +145,9 @@ module Theia
 
           @tracker.occurrences << occurrence
         end
-        rescue Errno::ENOENT => ex
-          Theia.logger.info "Could not find save file. Quitting..."
-          exit 1
-        end
+      rescue Errno::ENOENT
+        Theia.logger.info "Could not find save file. Quitting..."
+        exit 1
       end
 
       def clear_state!
@@ -155,6 +157,53 @@ module Theia
         @tracker.cycle = @cycle
       end
 
+      def setup_game!
+        path = File.expand_path('../../../../data/', __FILE__)
+        state = YAML.load_file("#{ path }/template.yml")
+
+        # Step 1: Build up the tracker and bring the cycle to 0. This allows
+        # the pieces to be registered and in an already detected state.
+        start_cycle     = state.length * -10
+        @cycle          = start_cycle
+        @tracker.cycle  = start_cycle
+
+        state.each do |initial_piece|
+          piece = Piece.all.detect { |p| p.key == initial_piece[:key] }
+          rect  = Rect.new(*initial_piece[:rect])
+
+          5.times do
+            next_cycle!
+            occurrence = Occurrence.new(rect, piece.color, piece, @cycle)
+            @tracker.track(occurrence)
+          end
+
+          5.times { next_cycle! }
+        end
+
+        # Step 2: Show a video of the map, and draw the boundaries where we
+        # expect the pieces to be in their initial position.
+        loop do
+          frame = nil
+
+          # Loop until we get a (perspective corrected) frame from the map.
+          while !frame do
+            frame = @map.frame
+          end
+
+          frame.resize!(Map::A0_SIZE)
+
+          state.each do |initial_piece|
+            rect = Rect.new(*initial_piece[:rect])
+            frame.draw_rectangle(rect, Color.new(255, 255, 255))
+            frame.draw_label(initial_piece[:key], rect.point)
+          end
+
+          board_window.show(frame)
+          break if GUI::wait_key(100) > 0
+        end
+      rescue Errno::ENOENT
+        Theia.logger.warn "Could not find template. Starting with a blank slate"
+      end
     end
   end
 end
