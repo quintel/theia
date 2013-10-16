@@ -27,14 +27,9 @@ module Theia
     # Public: Returns all the pieces.
     def self.all
       @@pieces ||= begin
-        pieces = YAML.load_file(self.data_path)
+        pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
         pieces.map { |p| Piece.new(p) }
       end
-    end
-
-    # Returns the file_path for the data_file
-    def self.data_path
-      File.expand_path('../../../data/pieces.yml', __FILE__)
     end
 
     # Public: Returns the Piece that best matches **color**

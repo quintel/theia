@@ -86,11 +86,8 @@ module Theia
             case GUI::wait_key(100)
             when 88 # X - Clear all
               clear_state!
-              break
-
             when 83 # S - Save and quit
               save_game_and_quit!
-              break
             end
 
             Log4r::NDC.pop
@@ -109,26 +106,20 @@ module Theia
           pieces: @pieces.sort
         }
 
-        path = File.expand_path('../../../../data/', __FILE__)
-
-        File.write "#{ path }/state.yml", state.to_yaml
+        File.write Theia.data_path_for('state.yml'), state.to_yaml
       end
 
       def save_game_and_quit!
         Theia.logger.info "Saving game and exiting..."
+
         game = @tracker.to_h
-
-        path = File.expand_path('../../../../data/', __FILE__)
-
-        File.write "#{ path }/saved.yml", game.to_yaml
+        File.write Theia.data_path_for('saved.yml'), game.to_yaml
         exit 0
       end
 
       def resume_game!
         Theia.logger.info "Resuming game"
-        path = File.expand_path('../../../../data/', __FILE__)
-
-        tracker = YAML.load_file("#{ path }/saved.yml")
+        tracker = YAML.load_file(Theia.data_path_for('saved.yml'))
 
         @tracker = Tracker.new
 
@@ -160,8 +151,7 @@ module Theia
       end
 
       def setup_game!
-        path = File.expand_path('../../../../data/', __FILE__)
-        state = YAML.load_file("#{ path }/template.yml")
+        state = YAML.load_file(Theia.data_path_for('template.yml'))
 
         # Build up the tracker and bring the cycle to 0. This allows
         # the pieces to be registered and in an already detected state.
