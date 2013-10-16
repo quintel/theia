@@ -9,6 +9,10 @@ module Theia
     # reliable. Check `Occurrence#reliability` for the specifics.
     RELIABILITY_THRESHOLD = 0.8
 
+    # By dividing the areas of a new blob and an existing occurrence, we get
+    # a ratio that should be within the values below.
+    MATCH_RATIO_RANGE = (0.65..1.35)
+
     attr_accessor :occurrences, :cycle
 
     def initialize
@@ -31,12 +35,9 @@ module Theia
       end
 
       if !piece.fresh?(@cycle) && (piece.last_seen + 1) < occurrence.first_seen
-        piece_area = piece.rect.area
-        occurrence_area = occurrence.rect.area
-        min = [piece_area, occurrence_area].min.to_f
-        max = [piece_area, occurrence_area].max.to_f
+        min, max = [piece.rect.area, occurrence.rect.area].sort
 
-        if (max / min) <= 1.35 && (max / min) >= 0.65
+        if MATCH_RATIO_RANGE.include? max / min
           piece.mark_for_deletion!(@cycle)
         end
       else
