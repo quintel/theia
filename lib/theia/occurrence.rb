@@ -38,6 +38,11 @@ module Theia
       @last_seen  = cycle
     end
 
+    # Public: Returns whether an occurrence is marked for deletion.
+    def marked_for_deletion?
+      @deletion
+    end
+
     # Public: Euclidian distance between this and another occurrence. This is
     #         calculated using the center points of the occurrences' bounding
     #         rects.
@@ -69,7 +74,7 @@ module Theia
       # A piece loses 15% of reliability for every sibling
       reliability = 0 if siblings.size > 4
 
-      if reliability < Tracker::THRESHOLD_RELIABILITY
+      if reliability < Tracker::RELIABILITY_THRESHOLD
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       end
 

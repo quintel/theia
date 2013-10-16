@@ -3,17 +3,11 @@ module Theia
   class Tracker
     # Maximum distance at which a pice will be considered to be overlapping
     # another one
-    DISTANCE_THRESHOLD = 10
+    DISTANCE_THRESHOLD = 20
 
     # Minimum value (between 0 and 1) where a detection is considered to be
     # reliable. Check `Occurrence#reliability` for the specifics.
-    THRESHOLD_RELIABILITY = 0.8
-
-    # Number of frames for which we keep an object marked for deletion
-    # around. This ensures that we give enough time to the background
-    # subtractor to "learn" that the object is not part of it anymore
-    # so that it doesn't get reported the next frame.
-    THRESHOLD_DELETION = 10
+    RELIABILITY_THRESHOLD = 0.8
 
     attr_accessor :occurrences, :cycle
 
@@ -53,9 +47,18 @@ module Theia
     def cleanup!
       @occurrences.each do |occurrence|
         others = siblings(occurrence)
-        if @cycle - occurrence.last_seen >= THRESHOLD_DELETION &&
-          occurrence.reliability(others) < THRESHOLD_RELIABILITY
-          @occurrences.delete(occurrence)
+
+        # Check if the occurrence is not present in the delta anymore
+        if occurrence.last_seen < @cycle
+          # If it's marked for deletion, just get rid of it.
+          if occurrence.marked_for_deletion?
+            @occurrences.delete(occurrence)
+          end
+
+          # If it's not a reliable result, get rid of it.
+          if occurrence.reliability(others) < RELIABILITY_THRESHOLD
+            @occurrences.delete(occurrence)
+          end
         end
       end
     end
@@ -66,7 +69,7 @@ module Theia
       pieces = []
       @occurrences.each do |occurrence|
         others = siblings(occurrence)
-        if occurrence.reliability(others) >= THRESHOLD_RELIABILITY
+        if occurrence.reliability(others) >= RELIABILITY_THRESHOLD
           pieces << occurrence
         end
       end
