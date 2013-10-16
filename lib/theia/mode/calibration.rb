@@ -52,28 +52,33 @@ module Theia
         end
 
         display = Image.new(Map::A1_SIZE, Image::TYPE_8UC3)
+        colors  = {}
 
-        with_cycle do |frame, delta|
-          display.copy!(frame)
-          board_window.show(display)
-          delta_window.show(delta)
+        catch(:done) do
+          loop do
+            with_cycle do |frame, delta|
+              display.copy!(frame)
+              board_window.show(display)
+              delta_window.show(delta)
 
-          unless contours.size == Piece.all.size
-            raise("I found #{ contours.size } on the board, " +
-                  "but #{ Piece.all.size } on disk. " +
-                  "Please add/remove pieces to align numbers.")
-          end
+              unless contours.size == Piece.all.size
+                raise("I found #{ contours.size } on the board, " +
+                      "but #{ Piece.all.size } on disk. " +
+                      "Please add/remove pieces to align numbers.")
+              end
 
-          Theia.logger.info "I found #{ contours.size } # of contours."
+              Theia.logger.info "I found #{ contours.size } # of contours."
 
-          colors = colors_from_contours(contours)
+              colors_from_contours!(contours, colors)
 
-          # We have enough colors
-          if colors.all? { |_, samples| samples.size >= COLOR_SAMPLES }
-            colors.each(&method(:update_piece))
+              # We have enough colors
+              if colors.all? { |_, samples| samples.size >= COLOR_SAMPLES }
+                colors.each { |key, samples| update_piece(key, samples) }
 
-            Theia.logger.info "Done! New colors have been saved to disk!"
-            break
+                Theia.logger.info "Done! New colors have been saved to disk!"
+                throw :done
+              end
+            end
           end
         end
       end
@@ -93,10 +98,10 @@ module Theia
       # Given a collection of contours, returns a hash where each key is the key
       # of a piece, and the value is an array containing the color of the piece
       # in the format [Y, Cr, Cb, 0.0].
-      def colors_from_contours(contours)
+      def colors_from_contours!(contours, previous)
         contours = contours.sort_by { |c| c.rect.y }
 
-        contours.each_with_object({}).with_index do |(contour, hash), index|
+        contours.to_enum.with_index.each_with_object(previous) do |(contour, index), hash|
           piece = Piece.all[index]
           color = grab_color_from_contour(contour)
 
@@ -112,13 +117,14 @@ module Theia
       # piece with the new color data.
       def update_piece(key, samples)
         piece = Piece.find(key)
+
         piece.color = mean_samples(samples)
         piece.save!
       end
 
       # Given an array of color samples, returns the mean average color found.
       def mean_samples(samples)
-        samples[0].zip(*samples[1..-1]).map do |colors|
+        samples[0].to_a.zip(*samples[1..-1].map(&:to_a)).map do |colors|
           colors.reduce(:+).to_f / colors.length
         end
       end

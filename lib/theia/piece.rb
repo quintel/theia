@@ -27,7 +27,10 @@ module Theia
     # Writes the current piece back to disk.
     def save!
       pieces = YAML.load_file(self.class.data_path)
-      pieces[key] = to_h
+
+      pieces.delete_at(pieces.index { |piece| piece[:key] == key })
+      pieces.push(to_h)
+
       File.write(self.class.data_path, pieces.to_yaml)
     end
 
@@ -55,6 +58,10 @@ module Theia
     def self.write
       result = self.all.map { |p| p.to_h }
       File.write self.data_path, result.to_yaml
+    end
+
+    def self.data_path
+      Theia.data_path_for('pieces.yml')
     end
   end # Piece
 
