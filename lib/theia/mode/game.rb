@@ -149,7 +149,7 @@ module Theia
         @tracker.cycle  = start_cycle
 
         state.each do |initial_piece|
-          piece = Piece.find_by_key(initial_piece[:key])
+          piece = Piece.find(initial_piece[:key])
           rect  = Rect.new(*initial_piece[:rect])
 
           5.times do

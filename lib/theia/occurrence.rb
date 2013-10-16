@@ -92,7 +92,7 @@ module Theia
     def self.from_h(hash)
       rect  = Rect.new(*hash[:rect])
       color = Color.new(*hash[:color])
-      piece = Piece.find_by_key(hash[:piece][:key])
+      piece = Piece.find(hash[:piece][:key])
 
       occurrence = Occurrence.new(rect, color, piece, hash[:cycle])
       occurrence.last_seen   = hash[:last_seen]

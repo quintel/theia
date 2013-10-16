@@ -40,7 +40,7 @@ module Theia
     end
 
     # Public: Returns the Piece whose key is **key**
-    def self.find_by_key(key)
+    def self.find(key)
       self.all.detect { |p| p.key == key }
     end
 
