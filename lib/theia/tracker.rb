@@ -81,5 +81,16 @@ module Theia
         occurrences:  @occurrences.map(&:to_h)
       }
     end
-  end
-end
+
+    def self.from_h(hash)
+      tracker = Tracker.new
+      tracker.cycle = hash[:cycle]
+
+      tracker.occurrences = hash[:occurrences].map do |o|
+        Occurrence.from_h(o)
+      end
+
+      tracker
+    end
+  end # Tracker
+end # Theia

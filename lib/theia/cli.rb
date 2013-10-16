@@ -45,5 +45,5 @@ module Theia
       websocket = Mode::Websocket.new(options)
       websocket.start
     end
-  end
-end
+  end # CLI
+end # Theia

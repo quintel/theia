@@ -67,6 +67,7 @@ module Theia
       reliability
     end
 
+    # Public: Represents an occurrence as a hash
     def to_h
       {
         rect:       [@rect.x, @rect.y, @rect.width, @rect.height],
@@ -77,5 +78,18 @@ module Theia
         deletion:   @deletion
       }
     end
-  end
-end
+
+    # Public: Builds an occurrence from a hash
+    def self.from_h(hash)
+      rect  = Rect.new(*hash[:rect])
+      color = Color.new(*hash[:color])
+      piece = Piece.find_by_key(hash[:piece][:key])
+
+      occurrence = Occurrence.new(rect, color, piece, hash[:cycle])
+      occurrence.last_seen   = hash[:last_seen]
+      occurrence.first_seen  = hash[:first_seen]
+
+      occurrence
+    end
+  end # Occurrence
+end # Theia

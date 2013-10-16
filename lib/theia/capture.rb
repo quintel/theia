@@ -37,5 +37,5 @@ module Theia
     end
 
     alias_method :>>, :capture
-  end
-end
+  end # Capture
+end # Theia

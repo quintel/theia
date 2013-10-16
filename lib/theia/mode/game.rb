@@ -7,14 +7,10 @@ module Theia
 
         @pieces = []
         @state  = :stopped
-        @grace  = 0
         @cycle  = 0
 
-        if options[:resume]
-          resume_game!
-        elsif !options[:blank]
-          setup_game!
-        end
+        resume_game! if     options[:resume]
+        setup_game!  unless options[:blank]
       end
 
       def delta_window
@@ -99,7 +95,7 @@ module Theia
       private
       #######
 
-      # Write to file to be picked up by the websocket.
+      # Private: Write to file to be picked up by the websocket.
       def write_state!
         state = {
           state:  @state,
@@ -109,6 +105,8 @@ module Theia
         File.write Theia.data_path_for('state.yml'), state.to_yaml
       end
 
+      # Private: Saves the current state to `data/saved.yml` and quits
+      #          the game.
       def save_game_and_quit!
         Theia.logger.info "Saving game and exiting..."
 
@@ -117,32 +115,20 @@ module Theia
         exit 0
       end
 
+      # Private: Resumes a previous session by loading it from
+      #          `data/saved.yml`
       def resume_game!
         Theia.logger.info "Resuming game"
         tracker = YAML.load_file(Theia.data_path_for('saved.yml'))
 
-        @tracker = Tracker.new
-
-        @tracker.cycle  = tracker[:cycle]
-        @cycle          = tracker[:cycle]
-
-        tracker[:occurrences].each do |o|
-          rect  = Rect.new(*o[:rect])
-          color = Color.new(*o[:color])
-
-          piece = Piece.all.detect { |p| p.key == o[:piece][:key] }
-
-          occurrence = Occurrence.new(rect, color, piece, o[:cycle])
-          occurrence.last_seen   = o[:last_seen]
-          occurrence.first_seen  = o[:first_seen]
-
-          @tracker.occurrences << occurrence
-        end
+        @tracker = Tracker.from_h(tracker)
+        @cycle   = tracker[:cycle]
       rescue Errno::ENOENT
         Theia.logger.info "Could not find save file. Quitting..."
         exit 1
       end
 
+      # Private: Resets the tracker.
       def clear_state!
         Theia.logger.info "Clearing state..."
 
@@ -150,6 +136,8 @@ module Theia
         @tracker.cycle = @cycle
       end
 
+      # Private: Builds up the tracker to an initial state of the game.
+      #          This is defined in `data/template.yml`
       def setup_game!
         state = YAML.load_file(Theia.data_path_for('template.yml'))
 
@@ -160,7 +148,7 @@ module Theia
         @tracker.cycle  = start_cycle
 
         state.each do |initial_piece|
-          piece = Piece.all.detect { |p| p.key == initial_piece[:key] }
+          piece = Piece.find_by_key(initial_piece[:key])
           rect  = Rect.new(*initial_piece[:rect])
 
           5.times do
@@ -174,6 +162,6 @@ module Theia
       rescue Errno::ENOENT
         Theia.logger.warn "Could not find template. Starting with a blank slate"
       end
-    end
-  end
-end
+    end # Game
+  end # Mode
+end # Theia

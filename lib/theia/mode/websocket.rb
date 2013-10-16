@@ -1,7 +1,5 @@
-require 'yajl/json_gem'
-require 'eventmachine'
-
 module Theia
+
   module Mode
     class Watcher < EventMachine::FileWatch
       def self.channel=(channel)
@@ -16,7 +14,7 @@ module Theia
         state = YAML.load_file(Theia.data_path_for('state.yml'))
         @@channel.push(state.to_json)
       end
-    end
+    end # Watcher
 
     class Websocket < Base
       attr_accessor :channel
@@ -50,6 +48,7 @@ Press Ctrl+C to stop.
           MSG
         }
       end
-    end
-  end
-end
+    end # Websocket
+  end # Mode
+
+end # Theia

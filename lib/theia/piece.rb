@@ -1,4 +1,5 @@
 module Theia
+
   class Piece
 
     attr_accessor :key, :color
@@ -18,6 +19,7 @@ module Theia
       ) / 92_050 # Max value for the above operation.
     end
 
+    # Public: Represents a piece as a hash
     def to_h
       { key: @key, color: @color.to_a }
     end
@@ -37,12 +39,15 @@ module Theia
       self.all.sort_by { |p| p.compare(color) }.first
     end
 
-    # Public: writes all the pieces back to disk
+    # Public: Returns the Piece whose key is **key**
+    def self.find_by_key(key)
+      self.all.detect { |p| p.key == key }
+    end
+
+    # Public: Writes all the pieces back to disk
     def self.write
       result = self.all.map { |p| p.to_h }
       File.write self.data_path, result.to_yaml
     end
-
-  end
-
-end
+  end # Piece
+end # Theia

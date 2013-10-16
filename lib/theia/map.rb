@@ -73,5 +73,5 @@ module Theia
         Theia.logger.warn("Cannot find the corners of the map")
       end
     end
-  end
-end
+  end # Map
+end # Theia

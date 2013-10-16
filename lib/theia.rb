@@ -1,10 +1,8 @@
-require 'yaml'
-require 'spyglass'
+require 'eventmachine'
 require 'log4r'
-
-require_relative 'theia/recording'
-require_relative 'theia/observation'
-require_relative 'theia/frame'
+require 'spyglass'
+require 'yajl/json_gem'
+require 'yaml'
 
 require_relative 'theia/helpers'
 require_relative 'theia/occurrence'
