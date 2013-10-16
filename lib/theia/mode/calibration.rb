@@ -6,6 +6,10 @@ module Theia
       MARGIN = 50
       LEARN_FRAMES = 75
 
+      # How many times to sample a colour during calibration before we have
+      # enough data.
+      COLOR_SAMPLES = 5
+
       def initialize(options)
         super(options)
 
@@ -31,20 +35,18 @@ module Theia
       end
 
       def start
+        puts <<-MESSAGE.gsub(/^ +/, '')
+          Starting...
 
-        # TODO: clean up
-        colors = Hash.new
-        Piece.all.each { |p| colors[p.key] = [] }
+          Please put the pieces on the map in a row, from left-to-right, in the
+          following order:
 
-        Theia.logger.info "Starting..."
+          #{ Piece.all.map { |piece| "* #{ piece.key }" }.join("\n") }
 
-        Theia.logger.info "Please put the pieces on the map from bottom to" +
-                          "Top in the following order:\n\n" +
-                          Piece.all.map { |p| "* #{ p.key} \n" }.join
+          Press any key to continue, or 'q' to exit...
+        MESSAGE
 
-        Theia.logger.info "Press any key to continue..."
-
-        unless $stdin.gets.chomp =~ /^$/
+        if $stdin.gets.strip == 'q'
           puts 'Aborted. Goodbye.'
           exit 0
         end
@@ -52,12 +54,9 @@ module Theia
         display = Image.new(Map::A1_SIZE, Image::TYPE_8UC3)
 
         with_cycle do |frame, delta|
-
           display.copy!(frame)
           board_window.show(display)
           delta_window.show(delta)
-
-          Theia.logger.info "I found #{ contours.size } # of contours."
 
           unless contours.size == Piece.all.size
             raise("I found #{ contours.size } on the board, " +
@@ -65,33 +64,17 @@ module Theia
                   "Please add/remove pieces to align numbers.")
           end
 
-          contours.sort_by! { |c| c.rect.y }
+          Theia.logger.info "I found #{ contours.size } # of contours."
 
-          contours.each_with_index do |contour, index|
-            piece = Piece.all[index]
-
-            color = grab_color_from_contour(contour)
-            Theia.logger.info "FOUND! contour for #{ Piece.all[index].key } with y: #{ contour.rect.y } with color: #{ color.to_a }\n"
-
-            colors[piece.key] << color
-          end
+          colors = colors_from_contours(contours)
 
           # We have enough colors
-          # TODO: Make 5 into a CONSTANT
-          if colors.all? { |k, v| v.size > 5 }
-
-            # TODO: Calculate average color
-            colors.each do |key, array|
-              piece = Piece.find(key)
-              piece.color = array.first.to_a
-              piece.save!
-            end
+          if colors.all? { |_, samples| samples.size >= COLOR_SAMPLES }
+            colors.each(&method(:update_piece))
 
             Theia.logger.info "Done! New colors have been saved to disk!"
             break
-
           end
-
         end
       end
 
@@ -103,6 +86,43 @@ module Theia
         @delta_window ||= GUI::Window.new("Delta")
       end
 
-    end
-  end
-end
+      #######
+      private
+      #######
+
+      # Given a collection of contours, returns a hash where each key is the key
+      # of a piece, and the value is an array containing the color of the piece
+      # in the format [Y, Cr, Cb, 0.0].
+      def colors_from_contours(contours)
+        contours = contours.sort_by { |c| c.rect.y }
+
+        contours.each_with_object({}).with_index do |(contour, hash), index|
+          piece = Piece.all[index]
+          color = grab_color_from_contour(contour)
+
+          Theia.logger.info "FOUND! contour for #{ Piece.all[index].key } " +
+                            "with y: #{ contour.rect.y } with color: " +
+                            "#{ color.to_a }"
+
+          (hash[piece.key] ||= []).push(color)
+        end
+      end
+
+      # Given the key of a piece, and the recorded color samples, updates the
+      # piece with the new color data.
+      def update_piece(key, samples)
+        piece = Piece.find(key)
+        piece.color = mean_samples(samples)
+        piece.save!
+      end
+
+      # Given an array of color samples, returns the mean average color found.
+      def mean_samples(samples)
+        samples[0].zip(*samples[1..-1]).map do |colors|
+          colors.reduce(:+).to_f / colors.length
+        end
+      end
+
+    end # Calibration
+  end # Mode
+end # Theia
