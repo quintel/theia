@@ -36,7 +36,7 @@ module Theia
         min = [piece_area, occurrence_area].min.to_f
         max = [piece_area, occurrence_area].max.to_f
 
-        if (max / min) <= 1.2 && (max / min) >= 0.8
+        if (max / min) <= 1.35 && (max / min) >= 0.65
           piece.mark_for_deletion!(@cycle)
         end
       else
