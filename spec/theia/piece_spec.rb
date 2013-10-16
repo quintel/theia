@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Piece do
 
+  let(:piece)      { Piece.all.first }
   let(:coal_piece) { Piece.new(key: 'coal', color: [0,0,0,0]) }
   let(:gas_piece)  { Piece.new(key: 'gas',  color: [255,255,255,0]) }
 
@@ -41,6 +42,38 @@ describe Piece do
       end
 
     end
+
+  end
+
+  describe '#save!' do
+
+    context 'with existing piece' do
+
+      it 'saves new color' do
+        piece = Piece.all.first
+        new_colors = [1, 2, 3, 4]
+        expect(piece.color).to_not eq new_colors
+
+        piece.color = new_colors
+        piece.save!
+
+        piece_reload = Piece.all(:force => true).first
+        expect(piece.color).to eq new_colors
+
+        Theia.refresh_fixtures!
+      end
+
+    end
+
+    context 'with new piece' do
+
+      xit 'saves to file' do
+        piece.save!
+        YAML.load_file(Theia.data_path_for('pieces.yml'))
+      end
+
+    end
+
 
   end
 
