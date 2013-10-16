@@ -62,3 +62,12 @@ Assuming you've followed the steps above (installed OpenCV, ran `bundle` and cop
     ./bin/theia calibrate
 
 and follow instructions
+
+# "Do's" and "dont's"
+
+* **Don't** break the map contour. If it gets broken, Theia stops updating the board. This is in place to prevent erroneous updates
+(ie shadows, arms, etc) from contaminating the background model.
+* **Don't** place pieces too close together. A good "rule of thumb" is to see if a finger fits between them (see what I did there?)
+* **Don't** place too many pieces at once. Try to place a maximum of two or at a time. Too many pieces will be considered a "flakey" update, and
+treated as such.
+* And most importantly, **do** have lots of fun with this game.
