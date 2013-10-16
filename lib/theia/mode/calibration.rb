@@ -21,7 +21,9 @@ module Theia
         Theia.logger.info "Starting Background learning. Please hold on..."
 
         LEARN_FRAMES.times do |i|
-          Theia.logger.info "At step #{ i } of #{ LEARN_FRAMES } now..."
+
+          print "At step #{ i + 1 } of #{ LEARN_FRAMES } now...\r"
+
           @frame = nil
           while !@frame do
             @frame = @map.frame
@@ -36,7 +38,6 @@ module Theia
 
       def start
         puts <<-MESSAGE.gsub(/^ +/, '')
-          Starting...
 
           Please put the pieces on the map in a row, from left-to-right, in the
           following order:
