@@ -1,4 +1,5 @@
 module Theia
+
   module Mode
     class VideoBase < Base
       BACKGROUND_FRAMES     = 50
@@ -26,12 +27,12 @@ module Theia
 
       def start
         if @debug
-          path = File.expand_path('../../../../data/tmp', __FILE__)
+          Dir.mkdir(Theia.tmp_path) unless Dir.exist?(Theia.tmp_path)
 
-          Dir.mkdir(path) unless Dir.exist?(path)
-
-          Dir.foreach(path) do |file|
-            File.delete("#{ path }/#{ file }") if file.end_with?('.png')
+          # Clean up the temporary directory if we are running a debug
+          # session again.
+          Dir.foreach(Theia.tmp_path) do |file|
+            File.delete("#{ Theia.tmp_path }/#{ file }") if file.end_with?('.png')
           end
         end
       end
@@ -71,10 +72,8 @@ module Theia
 
         # Save stuff
         if @debug
-          path = File.expand_path('../../../../data/tmp', __FILE__)
-
-          @frame.write "#{ path }/#{ "%04i" % @cycle }-frame.png"
-          @delta.write "#{ path }/#{ "%04i" % @cycle }-delta.png"
+          @frame.write "#{ Theia.tmp_path }/#{ "%04i" % @cycle }-frame.png"
+          @delta.write "#{ Theia.tmp_path }/#{ "%04i" % @cycle }-delta.png"
         end
 
         yield @frame, @delta
@@ -125,7 +124,8 @@ module Theia
           yield contour, grab_color_from_contour(contour)
         end
       end
-    end
-  end
-end
+    end # VideoBase
+  end # Mode
+
+end # Theia
 

@@ -1,4 +1,5 @@
 module Theia
+
   class Piece
 
     attr_accessor :key, :color
@@ -18,6 +19,7 @@ module Theia
       ) / 92_050 # Max value for the above operation.
     end
 
+    # Public: Represents a piece as a hash
     def to_h
       { key: @key, color: @color.to_a }
     end
@@ -34,14 +36,9 @@ module Theia
     # Public: Returns all the pieces.
     def self.all
       @@pieces ||= begin
-        pieces = YAML.load_file(self.data_path)
+        pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
         pieces.map { |p| Piece.new(p) }.sort_by { |p| p.key }
       end
-    end
-
-    # Returns the file_path for the data_file
-    def self.data_path
-      File.expand_path('../../../data/pieces.yml', __FILE__)
     end
 
     # Public: Returns the Piece that best matches **color**
@@ -49,17 +46,16 @@ module Theia
       self.all.sort_by { |p| p.compare(color) }.first
     end
 
-    # Public: Returns the Piece for `key`.
+    # Public: Returns the Piece whose key is **key**
     def self.find(key)
-      self.all.select { |p| p.key == key }.first
+      self.all.detect { |p| p.key == key }
     end
 
-    # Public: writes all the pieces back to disk
+    # Public: Writes all the pieces back to disk
     def self.write
       result = self.all.map { |p| p.to_h }
       File.write self.data_path, result.to_yaml
     end
+  end # Piece
 
-  end
-
-end
+end # Theia

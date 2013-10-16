@@ -19,4 +19,5 @@ doc/
 
 # Theia artifacts
 data/state.yml
+data/saved.yml
 data/tmp/*

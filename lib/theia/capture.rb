@@ -1,4 +1,5 @@
 module Theia
+
   # Video capture class. Encapsulates boundaries so that we deal with
   # smaller images.
   class Capture
@@ -37,5 +38,6 @@ module Theia
     end
 
     alias_method :>>, :capture
-  end
-end
+  end # Capture
+
+end # Theia

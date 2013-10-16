@@ -1,4 +1,5 @@
 module Theia
+
   module Mode
     class Calibration < VideoBase
 
@@ -124,4 +125,5 @@ module Theia
 
     end # Calibration
   end # Mode
+
 end # Theia

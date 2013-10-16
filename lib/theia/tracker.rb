@@ -1,8 +1,19 @@
 module Theia
+
   class Tracker
-    DISTANCE_THRESHOLD    = 10
+    # Maximum distance at which a pice will be considered to be overlapping
+    # another one
+    DISTANCE_THRESHOLD = 10
+
+    # Minimum value (between 0 and 1) where a detection is considered to be
+    # reliable. Check `Occurrence#reliability` for the specifics.
     THRESHOLD_RELIABILITY = 0.8
-    THRESHOLD_DELETION    = 10
+
+    # Number of frames for which we keep an object marked for deletion
+    # around. This ensures that we give enough time to the background
+    # subtractor to "learn" that the object is not part of it anymore
+    # so that it doesn't get reported the next frame.
+    THRESHOLD_DELETION = 10
 
     attr_accessor :occurrences, :cycle
 
@@ -75,11 +86,25 @@ module Theia
       siblings
     end
 
+    # Public: Represents the tracker as a hash
     def to_h
       {
         cycle:        @cycle,
         occurrences:  @occurrences.map(&:to_h)
       }
     end
-  end
-end
+
+    # Public: Builds the tracker from a hash
+    def self.from_h(hash)
+      tracker = Tracker.new
+      tracker.cycle = hash[:cycle]
+
+      tracker.occurrences = hash[:occurrences].map do |o|
+        Occurrence.from_h(o)
+      end
+
+      tracker
+    end
+  end # Tracker
+
+end # Theia

@@ -1,27 +1,25 @@
-require 'yajl/json_gem'
-require 'eventmachine'
-
 module Theia
+
   module Mode
     class Watcher < EventMachine::FileWatch
-
-      def self.path=(path)
-        @@path = path
-      end
-
+      # Public: Set the channel to which the watcher broadcasts changes.
       def self.channel=(channel)
         @@channel = channel
       end
 
+      # Internal: File modified callback. Gets triggered whenever 
+      #           `data/state.yml` is changed.
       def file_modified
         broadcast_state
       end
 
+      # Internal: Broadcasts the content of the state file, formatted as
+      #           JSON.
       def broadcast_state
-        state = YAML.load_file("#{ @@path }/state.yml")
+        state = YAML.load_file(Theia.data_path_for('state.yml'))
         @@channel.push(state.to_json)
       end
-    end
+    end # Watcher
 
     class Websocket < Base
       attr_accessor :channel
@@ -30,14 +28,10 @@ module Theia
         super(options)
 
         @channel = EM::Channel.new
-        @path = File.expand_path('../../../../data/', __FILE__)
-        Watcher.path = @path
         Watcher.channel = @channel
       end
 
       def start
-        super
-
         # Makes for more efficient file watching on OS X
         EventMachine.kqueue = EventMachine.kqueue?
 
@@ -52,13 +46,14 @@ module Theia
             end
           end
 
-          EM.watch_file("#{ @path }/state.yml", Watcher)
+          EM.watch_file(Theia.data_path_for('state.yml'), Watcher)
           puts <<-MSG
 Running on #{ @options[:host] || '0.0.0.0' }:#{ @options[:port] || 8080 }...
 Press Ctrl+C to stop.
           MSG
         }
       end
-    end
-  end
-end
+    end # Websocket
+  end # Mode
+
+end # Theia

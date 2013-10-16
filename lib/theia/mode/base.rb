@@ -12,6 +12,6 @@ module Theia
         Piece.all
       end
 
-    end
-  end
-end
+    end # Base
+  end # Mode
+end # Theia
