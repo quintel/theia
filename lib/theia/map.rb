@@ -14,6 +14,7 @@ module Theia
 
     A0_WIDTH  = 840
     A0_HEIGHT = 1_188
+    A0_SIZE   = Spyglass::Size.new(A0_HEIGHT, A0_WIDTH)
 
     A1_WIDTH  = 420
     A1_HEIGHT = 594
