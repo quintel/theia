@@ -3,6 +3,7 @@ require 'log4r'
 require 'spyglass'
 require 'yajl/json_gem'
 require 'yaml'
+require 'fileutils'
 
 require_relative 'theia/helpers'
 require_relative 'theia/occurrence'
