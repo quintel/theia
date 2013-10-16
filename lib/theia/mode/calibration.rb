@@ -32,8 +32,8 @@ module Theia
 
       def start
 
+        # TODO: clean up
         colors = Hash.new
-
         Piece.all.each { |p| colors[p.key] = [] }
 
         Theia.logger.info "Starting..."
@@ -77,6 +77,7 @@ module Theia
           end
 
           # We have enough colors
+          # TODO: Make 5 into a CONSTANT
           if colors.all? { |k, v| v.size > 5 }
 
             # TODO: Calculate average color
@@ -88,6 +89,7 @@ module Theia
 
             Theia.logger.info "Done! New colors have been saved to disk!"
             break
+
           end
 
         end
