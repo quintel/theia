@@ -23,7 +23,7 @@ module Theia
       game.start
     end
 
-    desc "calibrate", "Calibrates Theia for lighting conditions"
+    desc "calibrate", "Calibrates Theia for lighting conditions", aliases: 'c'
     method_option "pieces", type: :array, banner: "Comma-separated list of pieces to calibrate (all by default)"
     method_option "source", type: :string, banner: "Specify which video source to use"
     long_desc <<-D
