@@ -85,14 +85,11 @@ module Theia
         Log4r::NDC.pop if cycle_number
       end
 
-      # Public: Iterates through contours and yields them.
-      def with_each_contour
-        contours = @delta.contours
-
+      def contours
         # Ignore contours that either:
-        # * have an area smaller than 600 pixels
+        # * have an area smaller than so many pixels
         # * don't start at the edges
-        contours.select! do |c|
+        @delta.contours.select do |c|
           c.rect.area               > IGNORE_AREA_THRESHOLD &&
           c.rect.x                  > 0 &&
           c.rect.y                  > 0 &&
@@ -100,26 +97,32 @@ module Theia
           c.rect.y + c.rect.height  < Map::A0_WIDTH &&
           c.rect.area               < 20_000
         end
+      end
 
+      def grab_color_from_contour(contour)
+        mask = Image.new(@frame.size, Image::TYPE_8UC1)
+        mask.fill!(Color.new(0))
+        mask.draw_contours(contour, Color.new(255))
+
+        # Create an image with the ROI (region-of-interest), and copy
+        # the area drawn on the mask from the captured frame into this
+        # variable. We then convert it to YCrCb, which is much much better
+        # than RGB in terms of computer vision and get the mean colour.
+        roi = Image.new
+        roi.copy!(@frame, mask)
+        roi.convert!(ColorSpace[:BGR => :YCrCb])
+        color = roi.mean(mask)
+
+        color
+      end
+
+      # Public: Iterates through contours and yields them.
+      def with_each_contour
         contours.each do |contour|
           # Generate a MASK based on the current contour, and erode it so
           # that we can get rid of some of the shadow around the piece.
           # The whole map is black and the piece is white.
-          mask = Image.new(@frame.size, Image::TYPE_8UC1)
-          mask.fill!(Color.new(0))
-          mask.draw_contours(contour, Color.new(255))
-          # mask.erode! ERODE_PIECE_AMOUNT
-
-          # Create an image with the ROI (region-of-interest), and copy
-          # the area drawn on the mask from the captured frame into this
-          # variable. We then convert it to YCrCb, which is much much better
-          # than RGB in terms of computer vision and get the mean colour.
-          roi = Image.new
-          roi.copy!(@frame, mask)
-          roi.convert!(ColorSpace[:BGR => :YCrCb])
-          color = roi.mean(mask)
-
-          yield contour, color
+          yield contour, grab_color_from_contour(contour)
         end
       end
     end

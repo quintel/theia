@@ -22,13 +22,20 @@ module Theia
       { key: @key, color: @color.to_a }
     end
 
+    # Writes the current piece back to disk.
+    def save!
+      pieces = YAML.load_file(self.class.data_path)
+      pieces[key] = to_h
+      File.write(self.class.data_path, pieces.to_yaml)
+    end
+
     #------- CLASS METHODS ---------------------------------------------------
 
     # Public: Returns all the pieces.
     def self.all
       @@pieces ||= begin
         pieces = YAML.load_file(self.data_path)
-        pieces.map { |p| Piece.new(p) }
+        pieces.map { |p| Piece.new(p) }.sort_by { |p| p.key }
       end
     end
 
@@ -40,6 +47,11 @@ module Theia
     # Public: Returns the Piece that best matches **color**
     def self.find_by_color(color)
       self.all.sort_by { |p| p.compare(color) }.first
+    end
+
+    # Public: Returns the Piece for `key`.
+    def self.find(key)
+      self.all.select { |p| p.key == key }.first
     end
 
     # Public: writes all the pieces back to disk

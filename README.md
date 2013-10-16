@@ -46,7 +46,6 @@ To get a fresh check out, and get the pieces information run:
 
     git clone git@github.com:quintel/theia.git
     cd theia
-    cp data/pieces.yml.example data/pieces.yml
     bundle
     ./bin/theia
     
@@ -61,3 +60,5 @@ If you're just updating the code:
 Assuming you've followed the steps above (installed OpenCV, ran `bundle` and copied the example pieces file), all you have to do is:
 
     ./bin/theia calibrate
+
+and follow instructions
