@@ -80,7 +80,7 @@ module Theia
       # A piece loses all reliability if it shows up with 4 more occurrences.
       # This might happen in a situation where shadows are cast into the map
       # and the background subtractor does't have enough time to adapt to it.
-      reliability = 0 if siblings.size > 4
+      reliability = 0 if siblings.size > 10
 
       if reliability < Tracker::RELIABILITY_THRESHOLD
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
