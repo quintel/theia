@@ -64,7 +64,7 @@ module Theia
         # Straighten up that image!
         @raw.warp_perspective(corners, Size.new(A1_HEIGHT, A1_WIDTH))
       else
-        Theia.logger.warn("Cannot find the corners of the map")
+        Theia.logger.warn("Cannot find the corners of the map"); return nil
       end
     end
   end # Map
