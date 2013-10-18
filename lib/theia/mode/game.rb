@@ -85,6 +85,8 @@ module Theia
               save_game_and_quit!
             end
           end
+
+          break if @stop
         end
       end
 
@@ -109,7 +111,7 @@ module Theia
 
         game = @tracker.to_h
         File.write Theia.data_path_for('saved.yml'), game.to_yaml
-        exit 0
+        @stop = true
       end
 
       # Private: Resumes a previous session by loading it from
