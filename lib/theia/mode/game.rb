@@ -2,6 +2,7 @@ module Theia
 
   module Mode
     class Game < VideoBase
+      attr_reader :pieces
 
       def initialize(options)
         super(options)
