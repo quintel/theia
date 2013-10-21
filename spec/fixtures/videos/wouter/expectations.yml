@@ -1,9 +1,35 @@
-3:
-- nuclear_plaht
-# 
-# 10:
-# - coal_plant
-# - led_light
-# 
-# 20:
-# - electric_car
+18:
+- electric_car
+- electric_car
+
+33:
+- electric_car
+- electric_car
+- wind_turbine
+- wind_turbine
+
+58:
+- electric_car
+- electric_car
+- wind_turbine
+- wind_turbine
+- nuclear_plant
+
+62:
+- electric_car
+- electric_car
+- wind_turbine
+- wind_turbine
+- nuclear_plant
+- coal_plant
+
+# In this frame, 4 LED lights are added, but only 2 are recognised.
+88:
+- electric_car
+- electric_car
+- wind_turbine
+- wind_turbine
+- nuclear_plant
+- coal_plant
+- led_light
+- led_light
