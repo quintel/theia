@@ -14,4 +14,8 @@ module Theia
     end
   end
 
+  def self.silence_logger!
+    @logger = Log4r::Logger.new('Theia')
+  end
+
 end # Theia

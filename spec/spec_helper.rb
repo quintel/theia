@@ -1,4 +1,7 @@
 require 'theia'
+require_relative 'support/video_expectation'
+require_relative 'support/game_spec'
+require_relative 'support/lib/theia/mode/game_test'
 
 include Theia
 
@@ -13,7 +16,7 @@ module Theia
   def self.refresh_fixtures!
     FileUtils.cp_r('spec/fixtures/.', Theia.data_path)
   end
+
 end
 
-# Make sure we start with a clean slate
 Theia.refresh_fixtures!
