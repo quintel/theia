@@ -20,6 +20,8 @@ module Theia
       save the game and quit (S) or reset the board (X).
     D
     def game
+      Theia.logger.level = options[:verbose] ? Log4r::DEBUG : Log4r::INFO
+
       game = Mode::Game.new(options)
       game.start
     end
@@ -32,6 +34,10 @@ module Theia
       recalibrate the game, in order to get the most precise detections.
     D
     def calibrate
+      if Theia.logger.level > Log4r::INFO
+        Theia.logger.level = Log4r::INFO
+      end
+
       calibration = Mode::Calibration.new(options)
       calibration.start
     end

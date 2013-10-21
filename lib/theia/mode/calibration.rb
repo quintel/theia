@@ -30,10 +30,6 @@ module Theia
           end
           @bg_subtractor.subtract(@frame, 1.0/LEARN_FRAMES)
         end
-
-        if Theia.logger.level > Log4r::INFO
-          Theia.logger.level = Log4r::INFO
-        end
       end
 
       def start
