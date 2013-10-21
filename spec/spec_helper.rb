@@ -17,11 +17,11 @@ module Theia
     FileUtils.cp_r('spec/fixtures/.', Theia.data_path)
   end
 
-  def self.silence_logger!
-    logger.remove(logger.outputters)
-  end
+  # def self.silence_logger!
+    # logger.remove(Log4r::Outputter.stdout)
+  # end
 end
 
 # Make sure we start with a clean slate
 Theia.refresh_fixtures!
-Theia.silence_logger!
+# Theia.silence_logger!
