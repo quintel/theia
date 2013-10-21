@@ -77,9 +77,6 @@ module Theia
         end
 
         yield @frame, @delta
-
-        # Wait for key (but not use it) and loop after 100 ms.
-        debugger if GUI.wait_key(100) == 100
       ensure
         Log4r::NDC.pop if cycle_number
       end
