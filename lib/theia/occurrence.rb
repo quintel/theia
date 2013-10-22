@@ -7,7 +7,7 @@ module Theia
     MINIMUM_APPEARENCES = 4
 
     # The threshold at which we warn about a color difference
-    COLOR_WARNING_THRESHOLD = 0.10 # 10% difference
+    COLOR_WARNING_THRESHOLD = 0.05
 
     attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion
 
@@ -93,7 +93,7 @@ module Theia
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       else
         if color_difference > COLOR_WARNING_THRESHOLD
-          Theia.logger.warn "#{ @piece.key } has too big of a color difference (#{ color_difference * 100 })"
+          Theia.logger.warn "#{ @piece.key } at #{ @rect.x }, #{ @rect.y } has a color difference of (#{ color_difference * 100 }). You might need to (re)calibrate."
         end
       end
 
