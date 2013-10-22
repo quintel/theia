@@ -114,11 +114,7 @@ module Theia
         end
 
         # Format each piece to contain the + sign if the change was positive.
-        parts = []
-        changes.each do |piece, amount|
-          amount_str = (amount > 0 && "+#{ amount }") || amount.to_s
-          parts << "#{ amount_str } #{ piece }"
-        end
+        parts = changes.map { |piece, amount| "%+d %s" % [ amount, piece ] }
 
         # Output!
         Theia.logger.info(parts.join(', '))
