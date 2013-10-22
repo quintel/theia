@@ -20,3 +20,4 @@ module Theia
 end
 
 Theia.refresh_fixtures!
+Theia.silence_logger!

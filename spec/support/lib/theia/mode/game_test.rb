@@ -2,7 +2,6 @@ module Theia
   module Mode
     class GameTest < Game
       def initialize(fixture)
-        Theia.silence_logger!
         @fixture = fixture
         opts = {"source" => @fixture.video_path, "blank" => true }
 
