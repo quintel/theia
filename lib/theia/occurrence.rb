@@ -6,6 +6,9 @@ module Theia
     # considered a valid one.
     MINIMUM_APPEARENCES = 4
 
+    # The threshold at which we warn about a color difference
+    COLOR_WARNING_THRESHOLD = 0.10 # 10% difference
+
     attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion
 
     def initialize(rect, color, piece, cycle)
@@ -89,7 +92,7 @@ module Theia
       if reliability < Tracker::RELIABILITY_THRESHOLD
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       else
-        if color_difference > 0.10
+        if color_difference > COLOR_WARNING_THRESHOLD
           Theia.logger.warn "#{ @piece.key } has a color difference of more than 10% (#{ color_difference * 100 })"
         end
       end
