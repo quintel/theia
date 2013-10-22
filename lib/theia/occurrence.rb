@@ -74,8 +74,12 @@ module Theia
       reliability  = [@last_seen - @first_seen, MINIMUM_APPEARENCES].min
       reliability /= MINIMUM_APPEARENCES.to_f
 
+      color_difference = @piece.compare(color)
+      reliability -= color_difference
+
       Theia.logger.debug "Color spotted #{ @color.to_a }"
       Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
+
 
       # A piece loses all reliability if it shows up with 4 more occurrences.
       # This might happen in a situation where shadows are cast into the map
@@ -84,6 +88,10 @@ module Theia
 
       if reliability < Tracker::RELIABILITY_THRESHOLD
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
+      else
+        if color_difference > 0.10
+          Theia.logger.warn "#{ @piece.key } has a color difference of more than 10% (#{ color_difference * 100 })"
+        end
       end
 
       reliability
