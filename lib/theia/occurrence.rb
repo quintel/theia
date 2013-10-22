@@ -93,7 +93,7 @@ module Theia
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       else
         if color_difference > COLOR_WARNING_THRESHOLD
-          Theia.logger.warn "#{ @piece.key } has a color difference of more than 10% (#{ color_difference * 100 })"
+          Theia.logger.warn "#{ @piece.key } has too big of a color difference (#{ color_difference * 100 })"
         end
       end
 
