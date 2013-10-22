@@ -1,8 +1,17 @@
-# Dependencies
+# How To set this up
+
+If you want to play with this game, please follow the following instruction carefully. Otherwise the game
+might lead to unpredictable behavior.
 
 ## Camera
 
-Make sure you have [Webcam Settings](https://itunes.apple.com/us/app/webcam-settings/id533696630?mt=12) installed.
+You'll need a decent WebCam. We use the [Logitech C920](http://www.logitech.com/en-us/product/hd-pro-webcam-c920)
+and we can advise it.
+
+Make sure to install
+[Webcam Settings](https://itunes.apple.com/us/app/webcam-settings/id533696630?mt=12)
+to adjust the settings as described below. If you do not do this, your webcam will try
+to auto-focus and auto-balance colors, which leads to a significant drop in stability.
 
 ## Adapt settings for Webcam Settings(c)
 
@@ -60,6 +69,10 @@ If you're just updating the code:
 Assuming you've followed the steps above (installed OpenCV, ran `bundle` and copied the example pieces file), all you have to do is:
 
     ./bin/theia calibrate
+    
+or shorter:
+
+    ./bin/theia c
 
 and follow instructions
 
