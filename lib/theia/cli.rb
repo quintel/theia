@@ -24,6 +24,17 @@ module Theia
       game.start
     end
 
+    desc "color_measure", "Measures color diff on the map", aliases: 'cm'
+    method_option "key", type: :string, banner: "Specify which piece you want to measure"
+    long_desc <<-D
+      You can put SIMILAR pieces on the map and calculate the relative color
+      difference in order to measure rubustness.
+    D
+    def color_measure
+      color_measure = Mode::ColorMeasure.new(options)
+      color_measure.start
+    end
+
     desc "calibrate", "Calibrates Theia for lighting conditions", aliases: 'c'
     method_option "pieces", type: :array, banner: "Comma-separated list of pieces to calibrate (all by default)"
     method_option "source", type: :string, banner: "Specify which video source to use"
