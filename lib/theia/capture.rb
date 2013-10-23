@@ -10,8 +10,7 @@ module Theia
     #
     # options - An options hash.
     def initialize(options)
-      source = options["source"] || 0
-      @cap = VideoCapture.new source
+      @cap = options[:capture] || VideoCapture.new(options['source'] || 0)
 
       # Preemptively instantiate the image object we'll use.
       # This speeds up the process considerably, as memory

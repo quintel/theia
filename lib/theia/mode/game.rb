@@ -2,6 +2,7 @@ module Theia
 
   module Mode
     class Game < VideoBase
+      attr_reader :pieces
 
       def initialize(options)
         super(options)
@@ -86,6 +87,8 @@ module Theia
               clear_state!
             when 83 # S - Save and quit
               save_game_and_quit!
+            when 100 # d - debugger
+              debugger
             end
           end
 
