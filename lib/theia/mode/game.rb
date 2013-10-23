@@ -36,7 +36,11 @@ module Theia
       def start
         super
 
-        Theia.logger.info "Game started. Ready to go!"
+        Theia.logger.info "Game started. Ready to go!\n" +
+                          "Keep the following keys supressed on the Exec Window:\n" +
+                          "* X = clear all\n" +
+                          "* S = Save and quit\n" +
+                          "* Right-click on a piece = removes it"
 
         loop do
           with_cycle(@cycle) do |frame, delta|
