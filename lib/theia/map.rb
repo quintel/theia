@@ -53,7 +53,7 @@ module Theia
 
       # Return nil if nothing is detected (SNAFU)
       if contours.empty?
-        Theia.logger.warn("WARNING: Cannot find the map"); return nil
+        Theia.logger.warn("Cannot find the map"); return nil
       end
 
       # We wanna have the last (i.e. biggest) one!

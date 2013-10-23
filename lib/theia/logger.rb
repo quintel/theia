@@ -5,7 +5,7 @@ module Theia
     @logger ||= begin
       logger = Log4r::Logger.new('Theia')
 
-      outputter           = Log4r::Outputter.stdout
+      outputter           = Log4r::UniqueOutputter.new('stdout')
       outputter.formatter = Log4r::PatternFormatter.new(pattern: '%l - %x - %m')
 
       logger.add(outputter)

@@ -6,9 +6,9 @@ module Theia
       def initialize(options)
         super(options)
 
-        @pieces = []
-        @state  = :stopped
-        @cycle  = 0
+        @pieces           = []
+        @previous_pieces  = []
+        @cycle            = 0
 
         resume_game! if     options[:resume]
         setup_game!  unless options[:blank]
@@ -61,10 +61,10 @@ module Theia
               @tracker.track(occurrence)
             end
 
-            # Only overwrite the piece list if the game isn't paused. This
-            # weeds out erroneous results that we might get when a hand is
-            # over the board placing a piece.
-            @pieces = []
+            # Here, we have to call `dup` on the pieces variable so that we don't
+            # do a reference equals.
+            @previous_pieces  = @pieces.dup
+            @pieces           = []
 
             @tracker.pieces.each do |piece|
               frame.draw_rectangle(piece.rect, Color.new(255, 255, 255))
@@ -74,8 +74,7 @@ module Theia
 
             board_window.show(frame)
 
-            Theia.logger.info(@pieces)
-
+            output_diff
             write_state!
 
             case GUI::wait_key(100)
@@ -97,11 +96,28 @@ module Theia
       # Private: Write to file to be picked up by the websocket.
       def write_state!
         state = {
-          state:  @state,
           pieces: @pieces.sort
         }
 
         File.write Theia.data_path_for('state.yml'), state.to_yaml
+      end
+
+      # Private: Logs the difference between the previous frame and the current one.
+      def output_diff
+        diff = Diff::LCS.diff(@previous_pieces, @pieces).flatten
+        return if diff.empty?
+
+        # Group information by piece and consolidate
+        diff = diff.group_by(&:element)
+        changes = diff.map do |piece, change|
+          [ piece, change.inject(0) { |sum, a| sum += (a.action == '+' && 1) || -1 } ]
+        end
+
+        # Format each piece to contain the + sign if the change was positive.
+        parts = changes.map { |piece, amount| "%+d %s" % [ amount, piece ] }
+
+        # Output!
+        Theia.logger.info(parts.join(', '))
       end
 
       # Private: Saves the current state to `data/saved.yml` and quits
