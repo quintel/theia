@@ -61,6 +61,12 @@ module Theia
       Math.sqrt( (p2.x - p1.x)**2 + (p2.y - p1.y)**2 ).abs
     end
 
+    # Public: Calculates the color distance between the one measured on the
+    #         map and the one the piece was calibrated with.
+    def color_distance
+      @piece.compare(color)
+    end
+
     # Public: Returns a reliability score for an occurrence. The range of
     #         possible values goes from 0 (not reliable) to 1 (absolutely
     #         sure this is the right thing)
@@ -77,12 +83,10 @@ module Theia
       reliability  = [@last_seen - @first_seen, MINIMUM_APPEARENCES].min
       reliability /= MINIMUM_APPEARENCES.to_f
 
-      color_difference = @piece.compare(color)
-      reliability -= color_difference
+      reliability -= color_distance
 
       Theia.logger.debug "Color spotted #{ @color.to_a }"
-      Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ @piece.compare(color) }"
-
+      Theia.logger.debug "Color difference for best match #{ @piece.key }= #{ color_distance }"
 
       # A piece loses all reliability if it shows up with 4 more occurrences.
       # This might happen in a situation where shadows are cast into the map
@@ -92,8 +96,8 @@ module Theia
       if reliability < Tracker::RELIABILITY_THRESHOLD
         Theia.logger.debug "#{ @piece.key } is not reliable (#{ reliability }, #{ siblings.length } siblings, seen at #{ @first_seen } and then at #{ @last_seen })"
       else
-        if color_difference > COLOR_WARNING_THRESHOLD
-          Theia.logger.warn "#{ @piece.key } at #{ @rect.x }, #{ @rect.y } has a color difference of (#{ color_difference * 100 }). You might need to (re)calibrate."
+        if color_distance > COLOR_WARNING_THRESHOLD
+          Theia.logger.warn "#{ @piece.key } at #{ @rect.x }, #{ @rect.y } has a color difference of (#{ color_distance * 100 }). You might need to (re)calibrate."
         end
       end
 

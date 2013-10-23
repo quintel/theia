@@ -7,9 +7,10 @@ module Theia
       def initialize(options)
         super(options)
 
-        @pieces           = []
-        @previous_pieces  = []
-        @cycle            = 0
+        @pieces               = []
+        @occurrences          = []
+        @previous_occurrences = []
+        @cycle                = 0
 
         resume_game! if     options[:resume]
         setup_game!  unless options[:blank]
@@ -68,13 +69,14 @@ module Theia
 
             # Here, we have to call `dup` on the pieces variable so that we don't
             # do a reference equals.
-            @previous_pieces  = @pieces.dup
-            @pieces           = []
+            @pieces               = []
+            @previous_occurrences = @occurrences.dup
+            @occurrences          = @tracker.pieces
 
-            @tracker.pieces.each do |piece|
-              frame.draw_rectangle(piece.rect, Color.new(255, 255, 255))
-              frame.draw_label(piece.piece.key, piece.rect.point)
-              @pieces << piece.piece.key
+            @occurrences.each do |occurrence|
+              frame.draw_rectangle(occurrence.rect, Color.new(255, 255, 255))
+              frame.draw_label(occurrence.piece.key, occurrence.rect.point)
+              @pieces << occurrence.piece.key
             end
 
             board_window.show(frame)
@@ -111,20 +113,16 @@ module Theia
 
       # Private: Logs the difference between the previous frame and the current one.
       def output_diff
-        diff = Diff::LCS.diff(@previous_pieces, @pieces).flatten
-        return if diff.empty?
+        added   = @occurrences - @previous_occurrences
+        removed = @previous_occurrences - @occurrences
 
-        # Group information by piece and consolidate
-        diff = diff.group_by(&:element)
-        changes = diff.map do |piece, change|
-          [ piece, change.inject(0) { |sum, a| sum += (a.action == '+' && 1) || -1 } ]
+        added.each do |occurrence|
+          Theia.logger.info("Added: #{ occurrence.piece.key } (color diff: #{ occurrence.color_distance * 100 }%)")
         end
 
-        # Format each piece to contain the + sign if the change was positive.
-        parts = changes.map { |piece, amount| "%+d %s" % [ amount, piece ] }
-
-        # Output!
-        Theia.logger.info(parts.join(', '))
+        removed.each do |occurrence|
+          Theia.logger.info("Removed: #{ occurrence.piece.key }")
+        end
       end
 
       # Private: Saves the current state to `data/saved.yml` and quits
