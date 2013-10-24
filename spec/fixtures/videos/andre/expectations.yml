@@ -1,0 +1,76 @@
+32:
+- nuclear_plant
+
+43:
+- nuclear_plant
+- coal_plant
+
+58:
+- nuclear_plant
+- coal_plant
+- electric_car
+- electric_car
+- electric_car
+
+79:
+- nuclear_plant
+- coal_plant
+- electric_car
+- electric_car
+- electric_car
+- led_light
+
+86:
+- nuclear_plant
+- coal_plant
+- electric_car
+- electric_car
+- electric_car
+- led_light
+- led_light
+
+91:
+- nuclear_plant
+- coal_plant
+- electric_car
+- electric_car
+- electric_car
+- led_light
+- led_light
+- led_light
+
+96:
+- nuclear_plant
+- electric_car
+- electric_car
+- electric_car
+- led_light
+- led_light
+- led_light
+
+117:
+- nuclear_plant
+- electric_car
+- electric_car
+- electric_car
+- led_light
+- led_light
+- led_light
+- wind_turbine
+
+119:
+- electric_car
+- electric_car
+- led_light
+- led_light
+- led_light
+- wind_turbine
+
+143:
+- electric_car
+- electric_car
+- led_light
+- led_light
+- led_light
+- wind_turbine
+- gas_plant
