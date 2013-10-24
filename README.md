@@ -57,7 +57,7 @@ To get a fresh check out, and get the pieces information run:
     cd theia
     bundle
     ./bin/theia
-    
+
 If you're just updating the code:
 
     git up
@@ -69,7 +69,7 @@ If you're just updating the code:
 Assuming you've followed the steps above (installed OpenCV, ran `bundle` and copied the example pieces file), all you have to do is:
 
     ./bin/theia calibrate
-    
+
 or shorter:
 
     ./bin/theia c
