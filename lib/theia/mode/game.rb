@@ -79,6 +79,9 @@ module Theia
               @pieces << occurrence.piece.key
             end
 
+            # Draw the FPS indicator on the upper right corner.
+            frame.draw_label("FPS: %.2f" % @fps, Point.new(frame.cols - 80, 20), )
+
             board_window.show(frame)
 
             output_diff

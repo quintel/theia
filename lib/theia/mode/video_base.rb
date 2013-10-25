@@ -12,12 +12,14 @@ module Theia
       def initialize(options)
         super(options)
 
-        @capture        = Capture.new(options)
-        @debug          = !!options["debug"]
-        @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new threshold: 5, history: 5, sampling_rate: 2
-        @cycle          = 0
-        @tracker        = Tracker.new
+        @capture          = Capture.new(options)
+        @debug            = !!options["debug"]
+        @map              = Map.new(@capture)
+        @bg_subtractor    = BackgroundSubtractor::PratiMediod.new threshold: 5, history: 5, sampling_rate: 2
+        @cycle            = 0
+        @tracker          = Tracker.new
+        @processing_times = []
+        @fps              = 0.0
       end
 
       def next_cycle!
@@ -53,6 +55,11 @@ module Theia
           @frame = @map.frame
         end
 
+        # We only count processing times as soon as we get the map. Seen as
+        # this is a really fast operation (and most of the time is spent on
+        # background subtration).
+        cycle_start = Time.now
+
         next_cycle!
 
         Log4r::NDC.push("##{ @cycle }") if cycle_number
@@ -77,6 +84,17 @@ module Theia
         end
 
         yield @frame, @delta
+
+        cycle_finish = Time.now
+        msecs = (cycle_finish - cycle_start)
+
+        # After measuring how long it took to process the frame, add it to
+        # processing times, make sure we only account for the last 10
+        # measurements, average them out and divide them by 1 (sec). This
+        # gives us the FPS.
+        @processing_times << msecs
+        @processing_times.shift if @processing_times.length > 10
+        @fps = 1.0 / @processing_times.mean
       ensure
         Log4r::NDC.pop if cycle_number
       end
