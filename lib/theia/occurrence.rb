@@ -31,7 +31,7 @@ module Theia
     # Public: Returns true if a point is contained within the bounding rect.
     def contains?(x, y)
       x >= @rect.x && x <= (@rect.x + @rect.width) &&
-      y >= @rect.y && y <= (@rect.y + @rect.height)
+        y >= @rect.y && y <= (@rect.y + @rect.height)
     end
 
     # Public: Returns true if an occurrence has not been "swallowed" into the

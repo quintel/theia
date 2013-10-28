@@ -59,7 +59,9 @@ module Theia
               # Calculate the mean color proximity with the piece definitions.
               # Because we go by probability, we grab the most likely one by
               # the lowest distance between colours.
-              results = piece_definitions.map { |p| p.compare(mean) }
+              normalized_mean = normalize(mean, contour.rect, frame)
+
+              results = piece_definitions.map { |p| p.compare(normalized_mean) }
               min     = results.min
               piece   = Piece.all[results.index min]
               occurrence = Occurrence.new(contour.rect, mean, piece, @cycle)
@@ -101,6 +103,50 @@ module Theia
       #######
       private
       #######
+
+      # Takes a color and normalizes it for that particular point on the map
+      # For this, the color measurements are uses that were generated during
+      # calibration
+      def normalize(color, rect, frame)
+        # First step here is to figure out what reference points we can use
+        # (ie. which ones aren't being covered by a piece on the map.)
+        available_references = reference_points.select do |ref|
+          @tracker.raw_rects.all? { |r| !r.contains?(ref[:rect].center) }
+        end
+
+        # If there are no available references (might be a weird edge case,
+        # but we have to prevent it from happening) just return the colour.
+        return color if available_references.empty?
+
+        reference_distances = available_references.map do |ref|
+          Math.sqrt(
+            (ref[:rect].center.x - rect.center.x) ** 2 +
+            (ref[:rect].center.y - rect.center.y) ** 2
+          )
+        end
+
+        # Get the reference point with the closest distance to this piece
+        min_distance = reference_distances.min
+        reference    = available_references[reference_distances.index min_distance]
+        reference_color = reference[:color]
+
+        # Get the pixel value currently visible on the map
+        current_color = frame.color_at(reference[:rect].center)
+
+        # Calculate the difference
+        diff = [
+          reference_color[0] - current_color[0],
+          reference_color[1] - current_color[1],
+          reference_color[2] - current_color[2]
+        ]
+
+        Theia.logger.info "Color before: #{ color.to_a }"
+        Theia.logger.info "Difference in color is: #{ diff } (from #{ reference_color[0] } to #{ current_color[0] })"
+
+        normalized = Color.new(color[0] + diff[0], color[1] + diff[1], color[2] + diff[2])
+        Theia.logger.info "Color after: #{ normalized.to_a }"
+        color
+      end
 
       # Private: Write to file to be picked up by the websocket.
       def write_state!
@@ -181,6 +227,16 @@ module Theia
         end
       rescue Errno::ENOENT
         Theia.logger.warn "Could not find template. Starting with a blank slate"
+      end
+
+      # Private: Returns the reference points that were grabbed at calibration.
+      def reference_points
+        @@reference_points ||= begin
+          data = YAML.load_file(Theia.data_path_for('references.yml'))
+          data.map do |point|
+            { rect: Rect.new(*point[:rect]), color: Color.new(*point[:color]) }
+          end
+        end
       end
     end # Game
   end # Mode

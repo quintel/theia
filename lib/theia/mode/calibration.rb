@@ -10,6 +10,12 @@ module Theia
       # enough data.
       COLOR_SAMPLES = 5
 
+      # How many vertical slices we take to measure reference points
+      VERTICAL_SLICES = 6
+
+      # How many horizontal slices we take to measure reference points
+      HORIZONTAL_SLICES = 6
+
       def initialize(options)
         super(options)
 
@@ -21,7 +27,6 @@ module Theia
         Theia.logger.info "Starting Background learning. Please hold on..."
 
         LEARN_FRAMES.times do |i|
-
           print "At step #{ i + 1 } of #{ LEARN_FRAMES } now...\r"
 
           @frame = nil
@@ -30,9 +35,42 @@ module Theia
           end
           @bg_subtractor.subtract(@frame, 1.0/LEARN_FRAMES)
         end
+
+
       end
 
       def start
+        puts <<-MESSAGE.gsub(/^ +/, '')
+
+          Grabbing reference points...
+
+        MESSAGE
+        catch(:done) do
+          with_cycle do |frame, delta|
+            # Grab reference point colours to compare later.
+            references = []
+            ref_width  = frame.cols / VERTICAL_SLICES
+            ref_height = frame.rows / HORIZONTAL_SLICES
+
+            VERTICAL_SLICES.times do |x|
+              HORIZONTAL_SLICES.times do |y|
+                # Here we grab a chunk of the map, and get the colour of the
+                # pixel in the middle. This will help us determine later on
+                # what the variation between the calibration and the current
+                # state is so that we adjust the colors accordingly.
+                rect = Rect.new(x * ref_width, y * ref_height, ref_width, ref_height)
+                color = frame.color_at(rect.center)
+
+                references << { rect: rect.to_a, color: color.to_a }
+              end
+            end
+
+            update_reference_points(references)
+
+            throw :done
+          end
+        end
+
         puts <<-MESSAGE.gsub(/^ +/, '')
 
           Please put the pieces on the map in a row, from left-to-right, in the
@@ -117,6 +155,11 @@ module Theia
 
         piece.color = mean_samples(samples)
         piece.save!
+      end
+
+      def update_reference_points(references)
+        path = Theia.data_path_for('references.yml')
+        File.write(path, references.to_yaml)
       end
 
       # Given an array of color samples, returns the mean average color found.

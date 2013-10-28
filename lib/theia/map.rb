@@ -34,7 +34,7 @@ module Theia
 
       # We only wanna get hold of the black (dark) map boundary, so we trow
       # away all pixels that are whiter than 100.0
-      bw.threshold! 100.0, 255.0
+      bw.threshold! 80.0, 255.0
 
       # Canny is used to detect color changing boundaries.
       bw.canny! 100, 100

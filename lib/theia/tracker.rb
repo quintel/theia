@@ -25,6 +25,12 @@ module Theia
       @cycle += 1
     end
 
+    # Public: Returns all the rects that the tracker is tracking, even the
+    #         ones not considered stable.
+    def raw_rects
+      @occurrences.map(&:rect)
+    end
+
     # Public: Given a new occurrence, this method tries to figure out:
     #
     #         - If it already exists on the map, marking the current
