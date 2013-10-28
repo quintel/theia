@@ -145,7 +145,7 @@ module Theia
 
         normalized = Color.new(color[0] + diff[0], color[1] + diff[1], color[2] + diff[2])
         Theia.logger.info "Color after: #{ normalized.to_a }"
-        color
+        normalized
       end
 
       # Private: Write to file to be picked up by the websocket.
