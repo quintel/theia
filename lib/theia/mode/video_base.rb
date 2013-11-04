@@ -15,7 +15,7 @@ module Theia
         @capture        = Capture.new(options)
         @debug          = !!options["debug"]
         @map            = Map.new(@capture)
-        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new threshold: 15, history: 5, sampling_rate: 2
+        @bg_subtractor  = BackgroundSubtractor::PratiMediod.new threshold: 5, history: 5, sampling_rate: 2
         @cycle          = 0
         @tracker        = Tracker.new
       end
