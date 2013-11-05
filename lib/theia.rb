@@ -6,6 +6,7 @@ require 'yaml'
 require 'fileutils'
 
 require_relative 'core_ext/log4r/outputter/uniqueoutputter'
+require_relative 'core_ext/array'
 
 require_relative 'theia/helpers'
 require_relative 'theia/occurrence'
