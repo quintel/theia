@@ -31,6 +31,24 @@ module Theia
             piece.mark_for_deletion!(@cycle)
           end
 
+          window.on_click do |x, y|
+            occurrence = @tracker.pieces.detect { |p| p.contains?(x, y) }
+
+            if occurrence
+              piece            = occurrence.piece
+              idx              = Piece.all.index(piece)
+              next_idx         = (idx + 1) % Piece.all.length
+              occurrence.piece = Piece.all[next_idx]
+              occurrence.color = occurrence.piece.color
+            else
+              rect       = Rect.new(x - 18, y - 18, 36, 36)
+              piece      = Piece.all.first
+              occurrence = Occurrence.new(rect, piece.color, piece, @cycle)
+              occurrence.mark_as_forced!
+              @tracker.track(occurrence)
+            end
+          end
+
           window
         end
       end
@@ -42,6 +60,8 @@ module Theia
                           "Keep the following keys supressed on the Exec Window:\n" +
                           "* X = clear all\n" +
                           "* S = Save and quit\n" +
+                          "* Left-click on a piece shifts it to the next one\n" +
+                          "* Left-click on an empty spot adds a piece\n" +
                           "* Right-click on a piece = removes it"
 
         loop do

@@ -9,7 +9,8 @@ module Theia
     # The threshold at which we warn about a color difference
     COLOR_WARNING_THRESHOLD = 0.05
 
-    attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion
+    attr_accessor :rect, :color, :piece, :last_seen, :first_seen, :deletion,
+                  :forced
 
     def initialize(rect, color, piece, cycle)
       @rect       = rect
@@ -18,6 +19,7 @@ module Theia
       @last_seen  = cycle
       @first_seen = cycle
       @deletion   = false
+      @forced     = false
     end
 
     # Public: Returns the center point for the rect containing the occurrence.
@@ -51,6 +53,11 @@ module Theia
       @deletion
     end
 
+    # Public: Marks a piece as forcefully added.
+    def mark_as_forced!
+      @forced = true
+    end
+
     # Public: Euclidian distance between this and another occurrence. This is
     #         calculated using the center points of the occurrences' bounding
     #         rects.
@@ -77,6 +84,10 @@ module Theia
         Theia.logger.debug "#{ @piece.key } is marked for deletion."
         return 0
       end
+
+      # If a piece was forcefully added, we make it always return the maximum
+      # reliability.
+      return 1 if @forced
 
       # The initial score is based on the number of frames the piece
       # has been present for. 4 or more frames gives it full marks.

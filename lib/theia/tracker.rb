@@ -50,7 +50,7 @@ module Theia
         # accidentaly removing pieces.
         min, max = [piece.rect.area, occurrence.rect.area].sort
 
-        if MATCH_RATIO_RANGE.include? (max.to_f / min.to_f)
+        if MATCH_RATIO_RANGE.include? (max.to_f / min.to_f) || piece.forced
           piece.mark_for_deletion!(@cycle)
         end
       else
