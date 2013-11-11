@@ -161,7 +161,7 @@ module Theia
           text = piece.key
 
           if @selected_piece == piece
-            text = "> #{ text }"
+            text = ">>> #{ text } <<<"
           end
 
           piece_sel.draw_label(text, Point.new(0, offset_y + 10))
