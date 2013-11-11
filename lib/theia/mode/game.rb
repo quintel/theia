@@ -11,6 +11,7 @@ module Theia
         @occurrences          = []
         @previous_occurrences = []
         @cycle                = 0
+        @selected_piece       = nil
 
         resume_game! if     options[:resume]
         setup_game!  unless options[:blank]
@@ -40,12 +41,13 @@ module Theia
               next_idx         = (idx + 1) % Piece.all.length
               occurrence.piece = Piece.all[next_idx]
               occurrence.color = occurrence.piece.color
-            else
+            elsif @selected_piece
               rect       = Rect.new(x - 18, y - 18, 36, 36)
-              piece      = Piece.all.first
+              piece      = @selected_piece
               occurrence = Occurrence.new(rect, piece.color, piece, @cycle)
               occurrence.mark_as_forced!
               @tracker.track(occurrence)
+              @selected_piece = nil
             end
           end
 
@@ -66,6 +68,7 @@ module Theia
 
         loop do
           with_cycle(@cycle) do |frame, delta|
+            show_piece_selection!
             delta_window.show(delta)
 
             with_each_contour do |contour, mean|
@@ -132,6 +135,38 @@ module Theia
         }
 
         File.write Theia.data_path_for('state.yml'), state.to_yaml
+      end
+
+      # Private: Creates or shows a window for the piece selection
+      def piece_selection_window
+        @piece_sel_window ||= begin
+          window = GUI::Window.new('Piece selection')
+
+          window.on_click do |x, y|
+            piece_idx = y / 20
+            @selected_piece = Piece.all[piece_idx]
+          end
+
+          window
+        end
+      end
+
+      # Private: Shows the piece selection window.
+      def show_piece_selection!
+        pieces = Piece.all.count
+        piece_sel = Image.new(Size.new(200, (20 * pieces)), Image::TYPE_8UC3)
+        piece_sel.fill!(Color.new(0))
+        Piece.all.each_with_index do |piece, idx|
+          offset_y = idx * 20
+          text = piece.key
+
+          if @selected_piece == piece
+            text = "> #{ text }"
+          end
+
+          piece_sel.draw_label(text, Point.new(0, offset_y + 10))
+        end
+        piece_selection_window.show(piece_sel)
       end
 
       # Private: Logs the difference between the previous frame and the current one.
