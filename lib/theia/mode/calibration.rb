@@ -14,7 +14,7 @@ module Theia
         super(options)
 
         # Use a different background subtraction algorithm
-        @bg_subtractor = BackgroundSubtractor::MOG2.new history: 50, threshold: 8
+        @bg_subtractor = BackgroundSubtractor::MOG2.new history: 50, threshold: 12
 
         # Train the background first for 100 frames.
 
