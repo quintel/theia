@@ -13,10 +13,10 @@ module Theia
     #         between 0 and 1, where 0 is a perfect match.
     def compare(color)
       Math.sqrt(
-        (@color[0] - color[0]).abs ** 3 + # Lighting factor (less important)
-        (@color[1] - color[1]).abs ** 4 + # Color dimension 1
-        (@color[2] - color[2]).abs ** 4   # Color dimension 2
-      ) / 92_050 # Max value for the above operation.
+        (@color[0] - color[0]).abs ** 2 + # Lighting factor (less important)
+        (@color[1] - color[1]).abs ** 2 + # Color dimension 1
+        (@color[2] - color[2]).abs ** 2   # Color dimension 2
+      ) / 386 # Max value for the above operation.
     end
 
     # Public: Represents a piece as a hash

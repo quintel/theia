@@ -103,13 +103,16 @@ module Theia
             output_diff
             write_state!
 
-            case GUI::wait_key(100)
+            case key = GUI::wait_key(100)
             when 88 # X - Clear all
               clear_state!
             when 83 # S - Save and quit
               save_game_and_quit!
             when 100 # d - debugger
               debugger
+            else
+              piece = Piece.all.find { |p| p.key[0].ord == key }
+              @selected_piece = piece if piece
             end
           end
 
@@ -151,7 +154,7 @@ module Theia
         piece_sel.fill!(Color.new(0))
         Piece.all.each_with_index do |piece, idx|
           offset_y = idx * 20
-          text = piece.key
+          text = "[#{ piece.key[0] }]#{ piece.key[1,15] }"
 
           if @selected_piece == piece
             text = ">>> #{ text } <<<"
