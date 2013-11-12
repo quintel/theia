@@ -33,22 +33,15 @@ module Theia
           end
 
           window.on_click do |x, y|
-            occurrence = @tracker.pieces.detect { |p| p.contains?(x, y) }
+            next unless @selected_piece
 
-            if occurrence
-              piece            = occurrence.piece
-              idx              = Piece.all.index(piece)
-              next_idx         = (idx + 1) % Piece.all.length
-              occurrence.piece = Piece.all[next_idx]
-              occurrence.color = occurrence.piece.color
-            elsif @selected_piece
-              rect       = Rect.new(x - 18, y - 18, 36, 36)
-              piece      = @selected_piece
-              occurrence = Occurrence.new(rect, piece.color, piece, @cycle)
-              occurrence.mark_as_forced!
-              @tracker.track(occurrence)
-              @selected_piece = nil
-            end
+            rect       = Rect.new(x - 18, y - 18, 36, 36)
+            piece      = @selected_piece
+            occurrence = Occurrence.new(rect, piece.color, piece, @cycle)
+
+            occurrence.mark_as_forced!
+            @tracker.track(occurrence)
+            @selected_piece = nil
           end
 
           window
