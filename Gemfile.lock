@@ -27,6 +27,8 @@ GEM
       guard (>= 1.8)
       rspec (~> 2.13)
     http_parser.rb (0.5.3)
+    libusb (0.3.4)
+      ffi (>= 1.0)
     listen (1.2.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -74,6 +76,7 @@ DEPENDENCIES
   eventmachine
   guard
   guard-rspec
+  libusb
   log4r
   rake
   rspec
