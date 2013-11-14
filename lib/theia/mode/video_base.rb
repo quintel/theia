@@ -8,11 +8,25 @@ module Theia
       EROSION_AMOUNT        = 5
       IGNORE_AREA_THRESHOLD = 300
       ERODE_PIECE_AMOUNT    = 2
+      CAMERA_OPTIONS        = {
+        auto_exposure:       false,
+        auto_white_balance:  false,
+        anti_flicker:        false,
+        auto_focus:          false,
+        exposure:            100,
+        gain:                0,
+        brightness:          128,
+        contrast:            128,
+        saturation:          128,
+        sharpness:           128,
+        focus:               0,
+        zoom:                100
+      }
 
       def initialize(options)
         super(options)
-
         @capture          = Capture.new(options)
+        @live             = !!options["source"]
         @debug            = !!options["debug"]
         @map              = Map.new(@capture)
         @bg_subtractor    = BackgroundSubtractor::PratiMediod.new threshold: 15, history: 5, sampling_rate: 2
@@ -20,6 +34,7 @@ module Theia
         @tracker          = Tracker.new
         @processing_times = []
         @fps              = 0.0
+        @camera           = Camera.all.first
       end
 
       def next_cycle!
@@ -52,6 +67,7 @@ module Theia
 
         # Loop until we get a (perspective corrected) frame from the map.
         while !@frame do
+          @camera.set(CAMERA_OPTIONS)
           @frame = @map.frame
         end
 
