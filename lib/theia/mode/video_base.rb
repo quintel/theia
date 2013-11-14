@@ -9,17 +9,17 @@ module Theia
       IGNORE_AREA_THRESHOLD = 300
       ERODE_PIECE_AMOUNT    = 2
       CAMERA_OPTIONS        = {
-        auto_exposure:       false,
-        auto_white_balance:  false,
         anti_flicker:        false,
+        auto_exposure:       false,
         auto_focus:          false,
-        exposure:            100,
-        gain:                0,
+        auto_white_balance:  false,
         brightness:          128,
         contrast:            128,
+        exposure:            100,
+        focus:               0,
+        gain:                0,
         saturation:          128,
         sharpness:           128,
-        focus:               0,
         zoom:                100
       }
 
