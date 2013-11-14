@@ -8,37 +8,6 @@ might lead to unpredictable behavior.
 You'll need a decent WebCam. We use the [Logitech C920](http://www.logitech.com/en-us/product/hd-pro-webcam-c920)
 and we can advise it.
 
-Make sure to install
-[Webcam Settings](https://itunes.apple.com/us/app/webcam-settings/id533696630?mt=12)
-to adjust the settings as described below. If you do not do this, your webcam will try
-to auto-focus and auto-balance colors, which leads to a significant drop in stability.
-
-## Adapt settings for Webcam Settings(c)
-
-Please make sure you have the following settings applied:
-
-#### Basic:
-
-* Auto exposure: manual
-* Exposure time: 100
-* Gain: 0
-* Brightness, constract, saturation and sharpness: 128 (in the middle)
-* White balance temperature: 4250
-
-#### Advances:
-
-* Power line frequency: disabled
-* backlight compensation: off
-* Focus: Turn off auto: 0
-* Zoom: minimum (100)
-* Pan: 0
-* Tilt: 0
-
-#### Preferences:
-
-* Read auto settings: disabled
-* Write every settings to webcam: every 0.5 seconds
-
 ## OpenCV
 
 This project also depends on OpenCV 2.4.5. If you have homebrew
