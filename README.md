@@ -5,8 +5,11 @@ might lead to unpredictable behavior.
 
 ## Camera
 
-You'll need a decent WebCam. We use the [Logitech C920](http://www.logitech.com/en-us/product/hd-pro-webcam-c920)
-and we can advise it.
+This project uses **libusbx**, please make sure you install it
+
+    brew install libusbx
+
+then run `bundle`.
 
 ## OpenCV
 
