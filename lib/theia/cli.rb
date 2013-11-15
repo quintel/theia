@@ -4,7 +4,7 @@ module Theia
 
   class CLI < Thor
     default_task :game
-    class_option "blank",     type: :boolean, banner: "Starts the game without any initial pieces"
+    class_option "preset",    type: :boolean, banner: "Starts the game with some initial pieces"
     class_option "data-dir",  type: :string,  banner: "Directory where the data files reside"
     class_option "debug",     type: :boolean, banner: "Saves frames to a temporary directory"
     class_option "resume",    type: :boolean, banner: "Resume a previous game"

@@ -13,8 +13,8 @@ module Theia
         @cycle                = 0
         @selected_piece       = nil
 
-        resume_game! if     options[:resume]
-        setup_game!  unless options[:blank]
+        resume_game! if options[:resume]
+        setup_game!  if options[:preset]
       end
 
       def delta_window
