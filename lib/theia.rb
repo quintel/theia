@@ -4,6 +4,7 @@ require 'spyglass'
 require 'yajl/json_gem'
 require 'yaml'
 require 'fileutils'
+require 'libusb'
 
 require_relative 'core_ext/log4r/outputter/uniqueoutputter'
 require_relative 'core_ext/array'
