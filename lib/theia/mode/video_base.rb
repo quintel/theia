@@ -26,7 +26,7 @@ module Theia
       def initialize(options)
         super(options)
         @capture          = Capture.new(options)
-        @live             = !!options["source"]
+        @live             = !options["source"]
         @debug            = !!options["debug"]
         @map              = Map.new(@capture)
         @bg_subtractor    = BackgroundSubtractor::PratiMediod.new threshold: 12, history: 5, sampling_rate: 2
@@ -67,7 +67,7 @@ module Theia
 
         # Loop until we get a (perspective corrected) frame from the map.
         while !@frame do
-          @camera.set(CAMERA_OPTIONS)
+          @camera.set(CAMERA_OPTIONS) if @live
           @frame = @map.frame
         end
 

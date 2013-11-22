@@ -2,18 +2,26 @@ module Theia
 
   class Piece
 
-    attr_accessor :key, :color
+    attr_accessor :key, :color, :method
 
     def initialize(attributes)
       @key    = attributes[:key]
       @color  = Spyglass::Color.new(*attributes[:color])
+      @method = :normal
     end
 
     # Public: Returns the Euclidean distance of the piece's color
     #         between 0 and 1, where 0 is a perfect match.
     def compare(color)
+      light_diff = case @method
+                   when :normal
+                     0
+                   when :b
+                     @color[0] - color[0]
+                   end
+
       Math.sqrt(
-        (@color[0] - color[0]).abs ** 2 + # Lighting factor (less important)
+        light_diff ** 2 +
         (@color[1] - color[1]).abs ** 2 + # Color dimension 1
         (@color[2] - color[2]).abs ** 2   # Color dimension 2
       ) / 386 # Max value for the above operation.
@@ -41,7 +49,18 @@ module Theia
       @@pieces = nil if options[:force]
       @@pieces ||= begin
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
-        pieces.map { |p| Piece.new(p) }.sort_by { |p| p.key }
+        pieces.map! { |p| Piece.new(p) }.sort_by { |p| p.key }
+
+        pieces.each do |left|
+          pieces.each do |right|
+            if left.compare(right.color) < 3.0
+              left.method  = :b
+              right.method = :b
+            end
+          end
+        end
+
+        pieces
       end
     end
 
