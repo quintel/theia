@@ -1,7 +1,11 @@
 # How To set this up
 
-If you want to play with this game, please follow the following instruction carefully. Otherwise the game
-might lead to unpredictable behavior.
+If you want to play with this game, please follow the following instruction carefully.
+Otherwise the game might lead to unpredictable behavior.
+
+Below are instructions to set it up on Mac OSX. This game has been developed and
+tested on an **Mac OSX** system, but should just as well work on a Linux or
+Windows machine. Please file an [Issue](issues/new) when run into problems.
 
 ## Prerequisites
 
