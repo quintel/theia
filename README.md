@@ -68,10 +68,12 @@ To accomplish this, please first run in a Terminal window:
 
     ./bin/theia websocket
 
-Then fire up your 
+Then go to antoher Terminal window and pull the latest version of the
+Energy Game:
 
     cd ..
     git clone git@github.com:quintel/etflex.git
+    cd etflex
     git checkout theia-frontend
     bundle install
     bundle exec rails server
