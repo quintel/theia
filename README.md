@@ -1,6 +1,21 @@
+# What is this?
+
+This repository allows you to play the Energy Transition Model 3D game. The 3D 
+game is a tangible interface to the [Energy Game](http://etflex.et-model.com/) 
+and lets you explore the energy future of the Netherlands in a fun and visual 
+way. In order to play the game the need a map of The Netherlands and pieces 
+representing several types of electricity producers and measures that affect 
+the electricity demand. Send an email to <info@quintel.com> if you want to know 
+the details of the map and the pieces. In addition you need a web camera mounted 
+such that it can see the entire map.
+
+![Playing the Energy Transition Model 3D game](/images/people_playing_the_game.jpg)
+
+![Several pieces used in playing the game](/images/pieces.jpg)
+
 # How To set this up
 
-If you want to play with this game, please follow the following instruction carefully.
+If you want to play the game, please follow the following instruction carefully.
 Otherwise the game might lead to unpredictable behavior.
 
 Below are instructions to set it up on Mac OSX. This game has been developed and
