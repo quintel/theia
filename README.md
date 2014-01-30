@@ -9,9 +9,9 @@ the electricity demand. Send an email to <info@quintel.com> if you want to know
 the details of the map and the pieces. In addition you need a web camera mounted 
 such that it can see the entire map.
 
-![Playing the Energy Transition Model 3D game](/images/people_playing_the_game.JPG)
+![Playing the Energy Transition Model 3D game](/images/people_playing_the_game.JPG "Playing the Energy Transition Model 3D game")
 
-![Several pieces used in playing the game](/images/pieces.JPG)
+![Several pieces used in playing the game](/images/pieces.JPG "Several pieces used in playing the game")
 
 # How To set this up
 
