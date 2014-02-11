@@ -67,7 +67,7 @@ module Theia
 
         # Loop until we get a (perspective corrected) frame from the map.
         while !@frame do
-          @camera.set(CAMERA_OPTIONS)
+          @camera.set(CAMERA_OPTIONS) if @live
           @frame = @map.frame
         end
 
