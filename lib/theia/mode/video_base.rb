@@ -26,7 +26,7 @@ module Theia
       def initialize(options)
         super(options)
         @capture          = Capture.new(options)
-        @live             = !options["source"]
+        @live             = !options["source"] && options[:live] != false
         @debug            = !!options["debug"]
         @map              = Map.new(@capture)
         @bg_subtractor    = BackgroundSubtractor::PratiMediod.new threshold: 12, history: 5, sampling_rate: 2

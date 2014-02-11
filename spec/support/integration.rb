@@ -94,7 +94,7 @@ module Theia
     module IntegrationHelper
       def self.included(base)
         base.send(:let, :game) do
-          Theia::Mode::Game.new(capture: capture, blank: true)
+          Theia::Mode::Game.new(capture: capture, blank: true, live: false)
         end
 
         base.send(:around) do |example|
