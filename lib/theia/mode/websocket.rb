@@ -39,9 +39,11 @@ module Theia
           EM::WebSocket.run(host: @options[:host] || '0.0.0.0', port: @options[:port] || 8080) do |ws|
             ws.onopen do
               sid = @channel.subscribe { |msg| ws.send msg }
+              puts "Subscribe: sid##{ sid.inspect }"
 
               ws.onclose do
                 @channel.unsubscribe sid
+                puts "Unsubscribe: sid##{ sid.inspect }"
               end
             end
           end
