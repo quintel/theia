@@ -3,13 +3,6 @@ GEM
   specs:
     coderay (1.0.9)
     colored (1.2)
-    columnize (0.3.6)
-    debugger (1.6.1)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.3)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.3)
     diff-lcs (1.2.4)
     em-websocket (0.5.0)
       eventmachine (>= 0.12.9)
@@ -70,7 +63,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  debugger
   diff-lcs
   em-websocket
   eventmachine

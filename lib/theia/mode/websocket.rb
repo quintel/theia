@@ -7,7 +7,7 @@ module Theia
         @@channel = channel
       end
 
-      # Internal: File modified callback. Gets triggered whenever 
+      # Internal: File modified callback. Gets triggered whenever
       #           `data/state.yml` is changed.
       def file_modified
         broadcast_state
