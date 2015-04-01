@@ -21,6 +21,7 @@ module Theia
 
         tags = detections.values[0].values[0].values.flatten +
                detections.values[0].values[1].values.flatten
+        tags = tags.uniq
 
         state = { pieces: [] }
 
