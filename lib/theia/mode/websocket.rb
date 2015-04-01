@@ -19,17 +19,34 @@ module Theia
         detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
 
-        tags = detections.values[0].values[0].values.flatten +
-               detections.values[0].values[1].values.flatten
-        tags = tags.uniq
+        puts detections
+
+        if detections == false
+          print 'GOTCHA YOU LITTLE BUGGER!'
+          tags = []
+        else
+          r1 = detections.values[0].values[0].values.flatten
+          r2 = detections.values[0].values[1].values.flatten
+          tags = r1 + r2
+          tags = tags.uniq
+        end
 
         state = { pieces: [] }
 
-        pieces.each do |p|
-          if tags.include? p[:UID]
-            state[:pieces] << p[:key]
+        # This method seems slightly more robust?
+        tags.each do |t|
+          pieces.each do |p|
+            if t == p[:UID]
+              state[:pieces] << p[:key]
+            end
           end
         end
+
+        #pieces.each do |p|
+        #  if tags.include? p[:UID]
+        #    state[:pieces] << p[:key]
+        #  end
+        #end
 
         @@channel.push(state.to_json)
       end
