@@ -16,7 +16,20 @@ module Theia
       # Internal: Broadcasts the content of the state file, formatted as
       #           JSON.
       def broadcast_state
-        state = YAML.load_file(Theia.data_path_for('state.yml'))
+        detections = YAML.load_file('/Volumes/Home Directory/RFI2D/work/sw/bbb/detections.yml')
+        pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
+
+        tags = detections.values[0].values[0].values.flatten +
+               detections.values[0].values[1].values.flatten
+
+        state = { pieces: [] }
+
+        pieces.each do |p|
+          if tags.include? p[:UID]
+            state[:pieces] << p[:key]
+          end
+        end
+
         @@channel.push(state.to_json)
       end
     end # Watcher
