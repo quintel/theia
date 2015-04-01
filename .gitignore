@@ -2,6 +2,7 @@
 *.rbc
 .bundle
 .config
+.DS_Store
 coverage
 InstalledFiles
 lib/bundler/man
@@ -18,6 +19,6 @@ _yardoc
 doc/
 
 # Theia artifacts
-data/state.yml
+data/tag_detections.yml
 data/saved.yml
 data/tmp/*
