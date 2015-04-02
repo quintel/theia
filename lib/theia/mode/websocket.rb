@@ -22,33 +22,38 @@ module Theia
         puts detections
 
         if detections == false
-          print 'GOTCHA YOU LITTLE BUGGER!'
-          tags = []
+          puts 'THERE WAS A FALSE READ, HAS THE PROCESS SURVIVED?'
         else
           r1 = detections.values[0].values[0].values.flatten
           r2 = detections.values[0].values[1].values.flatten
           tags = r1 + r2
           tags = tags.uniq
-        end
 
-        state = { pieces: [] }
+          puts "tags: #{tags}"
 
-        # This method seems slightly more robust?
-        tags.each do |t|
+          state = { pieces: [] }
+
+          # This method seems slightly more robust?
+          tags.each do |t|
+            pieces.each do |p|
+              if t == p[:UID]
+                state[:pieces] << p[:key]
+              end
+            end
+          end
+
+          puts "state: #{state}"
+
           pieces.each do |p|
-            if t == p[:UID]
+            if tags.include? p[:UID]
               state[:pieces] << p[:key]
             end
           end
+
+          puts "state: #{state}"
+
+          @@channel.push(state.to_json)
         end
-
-        #pieces.each do |p|
-        #  if tags.include? p[:UID]
-        #    state[:pieces] << p[:key]
-        #  end
-        #end
-
-        @@channel.push(state.to_json)
       end
     end # Watcher
 
