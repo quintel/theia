@@ -19,38 +19,29 @@ module Theia
         detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
 
-        puts detections
-
         if detections == false
-          puts 'THERE WAS A FALSE READ, HAS THE PROCESS SURVIVED?'
+          puts 'Bad module read - no updates'
         else
           r1 = detections.values[0].values[0].values.flatten
           r2 = detections.values[0].values[1].values.flatten
-          tags = r1 + r2
-          tags = tags.uniq
-
-          puts "tags: #{tags}"
+          tags = (r1 + r2).uniq
 
           state = { pieces: [] }
 
           # This method seems slightly more robust?
-          tags.each do |t|
-            pieces.each do |p|
-              if t == p[:UID]
-                state[:pieces] << p[:key]
-              end
-            end
-          end
-
-          puts "state: #{state}"
+          #tags.each do |t|
+          #  pieces.each do |p|
+          #    if t == p[:UID]
+          #      state[:pieces] << p[:key]
+          #    end
+          #  end
+          #end
 
           pieces.each do |p|
             if tags.include? p[:UID]
               state[:pieces] << p[:key]
             end
           end
-
-          puts "state: #{state}"
 
           @@channel.push(state.to_json)
         end
