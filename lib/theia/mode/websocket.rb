@@ -15,12 +15,13 @@ module Theia
 
       # Internal: Broadcasts the content of the state file, formatted as
       #           JSON.
+
       def broadcast_state
         detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
 
         if detections == false
-          puts 'Bad module read - no updates'
+          puts 'Bad data read/write - no updates'
         else
           r1 = detections.values[0].values[0].values.flatten
           r2 = detections.values[0].values[1].values.flatten
@@ -28,21 +29,11 @@ module Theia
 
           state = { pieces: [] }
 
-          # This method seems slightly more robust?
-          #tags.each do |t|
-          #  pieces.each do |p|
-          #    if t == p[:UID]
-          #      state[:pieces] << p[:key]
-          #    end
-          #  end
-          #end
-
           pieces.each do |p|
-            if tags.include? p[:UID]
-              state[:pieces] << p[:key]
-            end
+            state[:pieces] << p[:key] if tags.include? p[:UID]
           end
 
+          puts "Pieces: #{ state[:pieces] }"
           @@channel.push(state.to_json)
         end
       end
