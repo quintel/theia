@@ -19,6 +19,7 @@ module Theia
       def broadcast_state
         detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
+        # pieces = pieces.map{ |p| p[:UID].flatten }
 
         if detections == false
           puts 'Bad data read/write - no updates'
@@ -30,7 +31,9 @@ module Theia
           state = { pieces: [] }
 
           pieces.each do |p|
-            state[:pieces] << p[:key] if tags.include? p[:UID]
+            (tags & p[:UID]).each do 
+              state[:pieces] << p[:key]
+            end
           end
 
           puts "Pieces: #{ state[:pieces] }"
