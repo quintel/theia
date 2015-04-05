@@ -17,6 +17,9 @@ module Theia
       #           JSON.
 
       def broadcast_state
+
+        offshore = %w(Antenna0 Antenna1 Antenna2 Antenna3 Antenna4 Antenna6)
+
         detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
         # pieces = pieces.map{ |p| p[:UID].flatten }
@@ -33,7 +36,7 @@ module Theia
           pieces.each do |p|
             (tags & p[:UID]).each do |t|
               if p[:key] == 'wind_turbine'
-                if detections.values[0].values[0].key([t]) == "Antenna0"
+                if offshore.include? detections.values[0].values[0].key([t])
                   state[:pieces] << "wind_turbine_offshore"
                 else
                   state[:pieces] << "wind_turbine_inland"
