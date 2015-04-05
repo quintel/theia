@@ -31,8 +31,16 @@ module Theia
           state = { pieces: [] }
 
           pieces.each do |p|
-            (tags & p[:UID]).each do 
-              state[:pieces] << p[:key]
+            (tags & p[:UID]).each do |t|
+              if p[:key] == 'wind_turbine'
+                if detections.values[0].values[0].key([t]) == "Antenna0"
+                  state[:pieces] << "wind_turbine_offshore"
+                else
+                  state[:pieces] << "wind_turbine_inland"
+                end
+              else
+                state[:pieces] << p[:key]
+              end
             end
           end
 
