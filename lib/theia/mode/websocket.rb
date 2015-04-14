@@ -1,7 +1,10 @@
 module Theia
 
   module Mode
-    class Watcher < EventMachine::FileWatch
+    class Watcher 
+      def initialize
+        @previous_detections = ""
+      end
       # Public: Set the channel to which the watcher broadcasts changes.
       def self.channel=(channel)
         @@channel = channel
@@ -12,43 +15,43 @@ module Theia
       def file_modified
         broadcast_state
       end
-
+      
       # Internal: Broadcasts the content of the state file, formatted as
       #           JSON.
-
       def broadcast_state
-
         offshore = %w(Antenna0 Antenna1 Antenna2 Antenna3 Antenna4 Antenna6)
 
-        detections = YAML.load_file(Theia.data_path_for('tag_detections.yml'))
+        detections = YAML.load_file('./data/tag_detections.yml')
         pieces = YAML.load_file(Theia.data_path_for('pieces.yml'))
-        # pieces = pieces.map{ |p| p[:UID].flatten }
 
-        if detections == false
-          puts 'Bad data read/write - no updates'
-        else
-          r1 = detections.values[0].values[0].values.flatten
-          r2 = detections.values[0].values[1].values.flatten
-          tags = (r1 + r2).uniq
+        if detections != @previous_detections
+          if detections == false
+            puts 'Bad data read/write - no updates'
+          else
+            r1 = detections.values[0].values[0].values.flatten
+            r2 = detections.values[0].values[1].values.flatten
+            tags = (r1 + r2).uniq
 
-          state = { pieces: [] }
+            state = { pieces: [] }
 
-          pieces.each do |p|
-            (tags & p[:UID]).each do |t|
-              if p[:key] == 'wind_turbine'
-                if offshore.include? detections.values[0].values[0].key([t])
-                  state[:pieces] << "wind_turbine_offshore"
+            pieces.each do |p|
+              (tags & p[:UID]).each do |t|
+                if p[:key] == 'wind_turbine'
+                  if offshore.include? detections.values[0].values[0].key([t])
+                    state[:pieces] << "wind_turbine_offshore"
+                  else
+                    state[:pieces] << "wind_turbine_inland"
+                  end
                 else
-                  state[:pieces] << "wind_turbine_inland"
+                  state[:pieces] << p[:key]
                 end
-              else
-                state[:pieces] << p[:key]
               end
             end
-          end
 
-          puts "Pieces: #{ state[:pieces] }"
-          @@channel.push(state.to_json)
+            puts "Pieces: #{ state[:pieces] }"
+            @@channel.push(state.to_json)
+          end
+          @previous_detections = detections
         end
       end
     end # Watcher
@@ -80,7 +83,10 @@ module Theia
             end
           end
 
-          EM.watch_file(Theia.data_path_for('tag_detections.yml'), Watcher)
+#          EM.watch_file('./data/tag_detections.yml', Watcher)
+          EM.add_periodic_timer(1) do
+            Watcher.new.file_modified
+          end
           puts <<-MSG
 Running on #{ @options[:host] || '0.0.0.0' }:#{ @options[:port] || 8080 }...
 Press Ctrl+C to stop.
