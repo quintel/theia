@@ -21,3 +21,5 @@ doc/
 data/state.yml
 data/saved.yml
 data/tmp/*
+
+.ruby-version
